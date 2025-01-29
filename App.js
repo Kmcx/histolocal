@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import axios from "axios";
+import Constants from "expo-constants";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -114,6 +117,8 @@ const SignUp1 = ({ navigation }) => (
 const SignUp2 = ({ navigation }) => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
 
   const handleNext = () => {
@@ -121,7 +126,30 @@ const SignUp2 = ({ navigation }) => {
       Alert.alert("Warning", "All fields are required to proceed.");
       return;
     }
-    navigation.navigate("SignUp3");
+
+    // Axios POST isteğini burada gerçekleştiriyoruz.
+    const postData = {
+      name: name,
+      email: email,
+      password: password,
+      role: role
+    };
+
+    axios
+      .post("http://localhost:5000/api/auth/register", postData, {
+        headers:{
+          "Content-Type": "application/json", // JSON formatında veri gönderildiğini belirtiyoruz.
+        }
+      })
+      .then((response) => {
+        console.log("Response:", response.data);
+        Alert.alert("Success", "Data successfully sent!");
+        navigation.navigate("SignUp3");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        Alert.alert("Error", "Failed to send data. Please try again later.");
+      });
   };
 
   return (
@@ -150,12 +178,24 @@ const SignUp2 = ({ navigation }) => {
           onChangeText={setEmail}
           keyboardType="email-address"
         />
+        <TextInput
+          style={styles.input}
+          placeholder="password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="role"
+          value={role}
+          onChangeText={setRole}
+        />
         <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
           <Text style={styles.nextButtonText}>Next Step</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
-  );
+  );
 };
 
 const SignUp3 = ({ navigation }) => {
@@ -229,24 +269,82 @@ const SignUp4 = () => (
   </ImageBackground>
 );
 
-const Login1 = ({ navigation }) => (
-  <ImageBackground
-    source={require("./assets/background.png")}
-    style={styles.background}
-  >
-    <View style={styles.slide}>
-      <Text style={styles.title}>Log In</Text>
-      <TextInput style={styles.input} placeholder="Email or Username" />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
-      <TouchableOpacity onPress={() => navigation.navigate("Login2")}>
-        <Text style={styles.linkText}>I forgot my password</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.nextButton}>
-        <Text style={styles.nextButtonText}>Log In</Text>
-      </TouchableOpacity>
-    </View>
-  </ImageBackground>
-);
+const Login1 = ({ navigation }) => {
+  const [email, setEmail] = useState(""); // Email için state
+  const [password, setPassword] = useState(""); // Şifre için state
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert("Warning", "Both email and password are required.");
+      return;
+    }
+  
+    const loginData = {
+      email: email,
+      password: password,
+    };
+  
+    // Axios POST isteği
+    axios
+      .post("http://localhost:5000/api/auth/login", loginData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("Response:", response.data);
+  
+        // Giriş başarılı mesajı göster
+        Alert.alert("Success", "Login successful!", [
+          {
+            text: "OK",
+            onPress: () => {
+              // Mesajdan sonra ana sayfaya yönlendirme
+              navigation.navigate("HomePage");
+            },
+          },
+        ]);
+      })
+      .catch((error) => {
+        console.error("Error:", error.response?.data || error.message);
+        Alert.alert(
+          "Error",
+          error.response?.data?.message || "Login failed. Please try again."
+        );
+      });
+  };
+  
+
+  return (
+    <ImageBackground
+      source={require("./assets/background.png")}
+      style={styles.background}
+    >
+      <View style={styles.slide}>
+        <Text style={styles.title}>Log In</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email or Username"
+          value={email}
+          onChangeText={setEmail} // Kullanıcı girişini state'e bağla
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword} // Kullanıcı girişini state'e bağla
+        />
+        <TouchableOpacity onPress={() => navigation.navigate("Login2")}>
+          <Text style={styles.linkText}>I forgot my password</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.nextButton} onPress={handleLogin}>
+          <Text style={styles.nextButtonText}>Log In</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
+  );
+};
 
 const Login2 = () => (
   <ImageBackground
