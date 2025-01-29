@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     guideDetails: {
         bio: { type: String, trim: true },
-        languages: [{ type: String }], // Örneğin: "English", "Turkish"
-        availability: { type: String }, // Örneğin: "Weekends Only"
+        languages: [{ type: String }], //  "English", "Turkish"
+        availability: { type: String }, // "Weekends Only"
     },
 });
 
-// Şifreyi hashleme
+//  Hashing password
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(10);

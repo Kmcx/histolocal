@@ -14,8 +14,19 @@ const swaggerOptions = {
                 description: 'Local Development Server',
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [{ bearerAuth: [] }],
+            
     },
-    apis: ['./src/routes/*.js'], // Rota dosyalarını içerir
+    apis: ['./src/routes/*.js'], // routes
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

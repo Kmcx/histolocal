@@ -4,7 +4,7 @@ const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 const { updateBookingStatus } = require('../controllers/bookingController');
 
-// Rezervasyon Oluşturma
+// create bookings
 /**
  * @swagger
  * /api/bookings:
@@ -37,7 +37,7 @@ const { updateBookingStatus } = require('../controllers/bookingController');
  */
 router.post('/', protect, createBooking);
 
-// Kullanıcının Rezervasyonlarını Listeleme
+// list users bookings
 /**
  * @swagger
  * /api/bookings:
@@ -77,7 +77,7 @@ router.post('/', protect, createBooking);
  */
 router.get('/', protect, getBookings);
 
-// Rezervasyon Durumu Güncelleme
+// update bookings
 /**
  * @swagger
  * /api/bookings/status:

@@ -13,12 +13,21 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes'); 
 
+const cors = require('cors');
 
-// MongoDB Bağlantısı
+// CORS Middleware
+app.use(cors({
+    origin: 'http://localhost:8081', // Frontend URL
+    methods: 'GET,POST,PUT,DELETE', 
+    credentials: true, 
+}));
+
+
+// MongoDB connection
 (async () => {
     await db.connect();
 })();
-// Uygulama kapandığında bağlantıyı kapat
+// close connection when app terminated
 process.on('SIGINT', async () => {
     await db.disconnect();
     process.exit(0);

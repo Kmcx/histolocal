@@ -2,7 +2,7 @@ const express = require('express');
 const { searchGuides } = require('../controllers/guideController');
 const router = express.Router();
 
-// Rehber Arama Rotası
+// search guide route
 /**
  * @swagger
  * /api/guides/search:

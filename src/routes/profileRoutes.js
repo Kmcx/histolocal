@@ -20,7 +20,7 @@ const router = express.Router();
  */
 router.get('/', protect, getProfile);
 
-// Profil Güncelleme
+// update profile
 /**
  * @swagger
  * /api/profile:

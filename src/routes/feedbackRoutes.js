@@ -3,7 +3,7 @@ const { createFeedback, getGuideFeedback } = require('../controllers/feedbackCon
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-// Geri Bildirim Oluşturma
+// create feedbacks
 /**
  * @swagger
  * /api/feedback:
@@ -37,7 +37,7 @@ const router = express.Router();
  */
 router.post('/', protect, createFeedback);
 
-// Rehber için Geri Bildirimleri Getirme
+// get feedbacks for guide
 /**
  * @swagger
  * /api/feedback/{guideId}:

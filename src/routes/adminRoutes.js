@@ -57,7 +57,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-// Rehber Doğrulama Rotası
+// guide verify route
 router.post('/verify-guide', protect, verifyGuide);
 
 module.exports = router;
