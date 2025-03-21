@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Web fallback storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authStyles } from "../styles/authStyles";
 
 export default function LoginScreen() {
@@ -11,51 +10,29 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const saveToken = async (key: string, value: string) => {
-    try {
-      if (Platform.OS === "web") {
-        await AsyncStorage.setItem(key, value); // ✅ Use AsyncStorage on Web
-      } else {
-        await SecureStore.setItemAsync(key, value); // ✅ Use SecureStore on Mobile
-      }
-    } catch (error) {
-      console.error("Error saving token:", error);
-    }
-  };
-
   const handleLogin = async () => {
-    console.log("Login button clicked!");
-
     if (!email || !password) {
       Alert.alert("Error", "Please enter email and password.");
       return;
     }
 
     try {
-      console.log("Sending login request with:", { email, password });
-
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/auth/login`, {
         email,
         password,
       });
 
-      console.log("Login response:", response.data);
-
-      // ✅ Store token securely based on platform
-      await saveToken("userToken", response.data.token);
-      await saveToken("userRole", response.data.role);
-
-      Alert.alert("Success", "Login successful!");
-      router.replace("/"); // Redirect to home
+      if (response.data.token) {
+        await AsyncStorage.setItem('userToken', response.data.token);
+        await AsyncStorage.setItem('userId', response.data._id); // ✅ Store userId as well
+        Alert.alert("Success", "Login successful!");
+        router.push("/home");
+      } else {
+        Alert.alert("Error", "Token not received.");
+      }
     } catch (error) {
       console.error("Login error:", error);
-      let errorMessage = "Login failed.";
-
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || "Login failed.";
-      }
-
-      Alert.alert("Error", errorMessage);
+      Alert.alert("Error", "Failed to login. Please try again.");
     }
   };
 
@@ -75,7 +52,7 @@ export default function LoginScreen() {
           <Text style={authStyles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/register")}>
+        <TouchableOpacity onPress={() => router.push("/register") }>
           <Text style={authStyles.link}>Don't have an account? Register</Text>
         </TouchableOpacity>
       </View>
