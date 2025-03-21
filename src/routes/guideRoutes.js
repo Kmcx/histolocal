@@ -1,5 +1,5 @@
 const express = require('express');
-const { searchGuides } = require('../controllers/guideController');
+const { searchGuides, listGuides } = require('../controllers/guideController');
 const router = express.Router();
 
 // search guide route
@@ -59,5 +59,14 @@ const router = express.Router();
  *         description: Server error
  */
 router.get('/search', searchGuides);
+
+
+
+
+
+router.get('/list', listGuides);
+
+
+
 
 module.exports = router;

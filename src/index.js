@@ -17,7 +17,7 @@ const cors = require('cors');
 
 // CORS Middleware
 app.use(cors({
-    origin: 'http://localhost:8081', // Frontend URL
+    origin: ['http://localhost:8081',"http://localhost:8082"], // Frontend URL
     methods: 'GET,POST,PUT,DELETE', 
     credentials: true, 
 }));
