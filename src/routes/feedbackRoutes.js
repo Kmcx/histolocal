@@ -1,5 +1,5 @@
 const express = require('express');
-const { createFeedback, getGuideFeedback } = require('../controllers/feedbackController');
+const { createFeedback, getGuideFeedback, getUserFeedback,getFeedbackForTour,getFeedbacksByTour } = require('../controllers/feedbackController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -80,5 +80,13 @@ router.post('/', protect, createFeedback);
  *         description: Server error
  */
 router.get('/:guideId', getGuideFeedback);
+
+router.get('/user/:userId', getUserFeedback);
+
+router.get('/tour/:tourId', protect, getFeedbackForTour);
+
+router.get('/bytour/:tourId', getFeedbacksByTour);
+
+
 
 module.exports = router;
