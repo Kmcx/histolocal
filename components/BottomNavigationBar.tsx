@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface BottomNavigationBarProps {
-  activeTab: 'home' | 'ai' | 'favorites' | 'profile';
+  activeTab: 'home' | 'ai' | 'tours' | 'profile';
 }
 
 export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ activeTab }) => {
@@ -23,7 +23,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ active
   const tabs = [
     { name: 'home', icon: 'home-outline', route: '/home', label: 'Anasayfa' },
     { name: 'ai', icon: 'sparkles-outline', route: '/ai', label: 'AI' },
-    { name: 'favorites', icon: 'heart-outline', route: '/favorites', label: 'Favoriler' },
+    { name: 'tours', icon: 'map-outline', route: '/tours', label: 'Tours' },
   ];
 
   return (
