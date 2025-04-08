@@ -55,6 +55,11 @@ export default function LoginScreen() {
         <TouchableOpacity onPress={() => router.push("/register") }>
           <Text style={authStyles.link}>Don't have an account? Register</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push("/admin/login")}>
+           <Text style={[authStyles.link, { marginTop: 10 }]}>Login as Admin</Text>
+        </TouchableOpacity>
+
       </View>
     </ImageBackground>
   );
