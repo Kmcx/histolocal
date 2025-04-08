@@ -46,4 +46,20 @@ const updateProfile = async (req, res) => {
     }
 };
 
-module.exports = { getProfile, updateProfile };
+
+const uploadIDImage = async (req, res) => {
+    const userId = req.user._id;
+    const { imageUrl } = req.body;
+  
+    try {
+      const user = await User.findById(userId);
+      user.idImageUrl = imageUrl;
+      await user.save();
+      res.status(200).json({ message: "ID uploaded successfully." });
+    } catch (error) {
+      res.status(500).json({ message: "Upload failed", error: error.message });
+    }
+  };
+  
+
+module.exports = { getProfile, updateProfile, uploadIDImage };

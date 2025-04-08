@@ -85,7 +85,7 @@ const getTourRequests = async (req, res) => {
   };
 
   const getOngoingTours = async (req, res) => {
-    console.log('Ongoing tours endpoint hit. req.user:', req.user);
+    
 
     try {
       const tours = await Tour.find({

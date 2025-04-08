@@ -1,7 +1,12 @@
 const express = require('express');
-const { getProfile, updateProfile } = require('../controllers/profileController');
+const { getProfile, updateProfile, uploadIDImage } = require('../controllers/profileController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+
+
+
+router.post("/upload-id", protect, uploadIDImage);
+
 
 // Profil Görüntüleme
 /**
