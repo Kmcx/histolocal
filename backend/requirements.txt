@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+ollama
+pydantic
+python-dotenv
+slowapi
+aiofiles
+requests
+json
