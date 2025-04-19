@@ -1,0 +1,233 @@
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Linking,
+} from 'react-native';
+import { BottomNavigationBar } from '../../components/BottomNavigationBar';
+import { Ionicons } from '@expo/vector-icons';
+import { useAIChat } from '../contexts/AIChatContext';
+
+type Message = {
+  id: string;
+  role: 'user' | 'ai';
+  text: string;
+  timestamp: string;
+};
+
+export default function AIChatScreen() {
+  const { messages, setMessages } = useAIChat();
+  const [input, setInput] = useState('');
+  const [context, setContext] = useState<any>({});
+  const [loading, setLoading] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const timestamp = new Date().toLocaleTimeString();
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      text: input,
+      timestamp,
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
+
+    const typingMessage: Message = {
+      id: 'typing',
+      role: 'ai',
+      text: 'Typing...',
+      timestamp: '',
+    };
+    setMessages(prev => [...prev, typingMessage]);
+
+    try {
+      console.log("FETCH URL:", `http://localhost:8000/generate-itinerary/`);
+
+      const res = await fetch(`http://localhost:8000/generate-itinerary/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMessage.text, context }),
+      });
+
+      const data = await res.json();
+      const aiMessage: Message = {
+        id: Date.now().toString() + '_ai',
+        role: 'ai',
+        text: data.response || 'No response received.',
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setContext(data.context || {});
+      setMessages(prev => [...prev.filter(m => m.id !== 'typing'), aiMessage]);
+    } catch (err) {
+      console.error("❌ FETCH ERROR:", err);
+    
+      const errorMessage: Message = {
+        id: 'error',
+        role: 'ai',
+        text: 'Error: Could not connect to AI server.',
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setMessages(prev => [...prev.filter(m => m.id !== 'typing'), errorMessage]);
+    }
+     finally {
+      setLoading(false);
+    }
+  };
+
+  const renderMarkdown = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|\[.*?\]\(.*?\))/g);
+    return parts.map((part, index) => {
+      if (/^\*\*(.*?)\*\*$/.test(part)) {
+        return <Text key={index} style={{ fontWeight: 'bold' }}>{part.replace(/\*\*/g, '')}</Text>;
+      }
+      if (/^\*(.*?)\*$/.test(part)) {
+        return <Text key={index} style={{ fontStyle: 'italic' }}>{part.replace(/\*/g, '')}</Text>;
+      }
+      if (/^\[(.*?)\]\((.*?)\)$/.test(part)) {
+        const match = part.match(/^\[(.*?)\]\((.*?)\)$/);
+        return (
+          <Text key={index} style={{ color: 'blue' }} onPress={() => Linking.openURL(match![2])}>
+            {match![1]}
+          </Text>
+        );
+      }
+      return <Text key={index}>{part}</Text>;
+    });
+  };
+
+  const renderItem = ({ item }: { item: Message }) => {
+    const isUser = item.role === 'user';
+    return (
+      <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
+        <Ionicons
+          name={isUser ? 'person-circle-outline' : 'sparkles-outline'}
+          size={30}
+          color={isUser ? '#4A90E2' : '#aaa'}
+          style={{ marginRight: 8 }}
+        />
+        <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.aiBubble]}>
+          <Text style={styles.messageText}>{renderMarkdown(item.text)}</Text>
+          {item.timestamp && (
+            <Text style={styles.timestamp}>{item.timestamp}</Text>
+          )}
+          {item.id === 'typing' && (
+            <ActivityIndicator size="small" color="#555" />
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.wrapper}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={100}
+    >
+      <View style={styles.chatArea}>
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ padding: 10 }}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        />
+
+        <View style={styles.inputArea}>
+          <TextInput
+            value={input}
+            onChangeText={setInput}
+            placeholder="Type your message..."
+            style={styles.input}
+            multiline
+            onSubmitEditing={sendMessage}
+          />
+          <TouchableOpacity onPress={sendMessage} style={styles.sendButton} disabled={loading}>
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>{loading ? '...' : 'Send'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <BottomNavigationBar activeTab="ai" />
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  chatArea: {
+    flex: 1,
+    marginBottom: 60,
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    marginVertical: 6,
+    alignItems: 'flex-end',
+  },
+  userAlign: { justifyContent: 'flex-end', alignSelf: 'flex-end' },
+  aiAlign: { justifyContent: 'flex-start', alignSelf: 'flex-start' },
+  messageBubble: {
+    maxWidth: '75%',
+    padding: 10,
+    borderRadius: 12,
+  },
+  userBubble: {
+    backgroundColor: '#DCF8C6',
+  },
+  aiBubble: {
+    backgroundColor: '#eee',
+  },
+  messageText: { fontSize: 16 },
+  timestamp: {
+    fontSize: 10,
+    color: '#888',
+    marginTop: 4,
+    textAlign: 'right',
+  },
+  inputArea: {
+    flexDirection: 'row',
+    padding: 10,
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+  },
+  input: {
+    flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    minHeight: 40,
+    maxHeight: 100,
+    marginRight: 10,
+  },
+  sendButton: {
+    backgroundColor: '#4A90E2',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    justifyContent: 'center',
+  },
+});
