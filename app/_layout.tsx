@@ -1,9 +1,10 @@
 import { Stack } from "expo-router";
+import { AIChatProvider } from "./contexts/AIChatContext"; // adjust if needed
 
 export default function Layout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* This Stack automatically includes all screens inside `app/` */}
-    </Stack>
+    <AIChatProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AIChatProvider>
   );
 }
