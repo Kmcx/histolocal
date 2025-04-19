@@ -1,0 +1,93 @@
+{
+  "Çeşme": {
+    "coordinates": ["38.3232", "26.3052"],
+    "beaches": ["Ilica Beach", "Delikli Koy", "Altinkum Beach", "Ayayorgi Bay"],
+    "historical sites": ["Çeşme Castle", "Erythrai Ancient City (Ildiri)"],
+    
+    "transport": [
+      "From İzmir Otogar: Intercity bus to Çeşme Terminal (~90 min)",
+      "From Üçkuyular: ESHOT bus 984 to Çeşme (~100 min)"
+    ]
+  },
+  "Konak": {
+    "coordinates": ["38.4192", "27.1287"],
+    "historical sites": ["Clock Tower", "Kemeralti Bazaar", "Agora Ancient City", "Historical Elevator"],
+    "city life": ["Alsancak Kordon", "Konak Pier", "Güzelyali Coast"],
+    "transport": [
+      "Accessible via İzmir Metro: Konak Station",
+      "Tram: Konak Tram Line (T1)",
+      "Ferry: From Karsiyaka or Bostanli to Konak Pier"
+    ]
+  },
+  "Bornova": {
+    "coordinates": ["38.4592", "27.2222"],
+    "historical sites": ["Bornova Atatürk House"],
+    "city life": ["Küçükpark", "Büyükpark"],
+    "nature": ["Homeros Valley"],
+    "transport": [
+      "İzmir Metro: Get off at Bornova or Evka 3 stations",
+      "ESHOT buses from Konak/Alsancak to Bornova center"
+    ]
+  },
+  "Karşiyaka": {
+    "coordinates": ["38.4550", "27.1100"],
+    "historical sites": ["Zübeyde Hanim Memorial Tomb"],
+    "city life": ["Bostanli Bazaar", "Mavişehir Marina"],
+    "nature": ["Bostanli Recreation Area"],
+    "transport": [
+      "İZBAN train to Alaybey or Karşiyaka station",
+      "Ferry from Konak to Karşiyaka Terminal",
+      "Tram: Karşiyaka Tram Line (T2)"
+    ]
+  },
+  "Urla": {
+    "coordinates": ["38.3700", "26.7800"],
+    "historical sites": ["Klazomenai Ancient City"],
+    "city life": ["Urla Art Street", "Wine Route Vineyards"],
+    "nature": ["Demircili Bay", "Balikliova", "Yassica Island"],
+    "transport": [
+      "ESHOT Bus 984 from Fahrettin Altay Transfer Center (~70 min)",
+      "Minibuses from Üçkuyular to Urla center"
+    ]
+  },
+  "Seferihisar": {
+    "coordinates": ["38.1966", "26.8372"],
+    "historical sites": ["Teos Ancient City"],
+    "city life": ["Siğacik Old Town"],
+    "nature": ["Akkum Beach", "Doğanbey Village"],
+    "transport": [
+      "ESHOT Bus 985 from Fahrettin Altay to Seferihisar (~80 min)",
+      "Minibus from Üçkuyular or Balçova"
+    ]
+  },
+  "Foça": {
+    "coordinates": ["38.6683", "26.7564"],
+    "historical sites": ["Old Foça Fortifications"],
+    "city life": ["Foça Marina"],
+    "nature": ["Siren Rocks", "Mersinaki Bay"],
+    "transport": [
+      "ESHOT Bus 744 from Hatundere (İZBAN) to Foça (~60 min)",
+      "Minibuses from Menemen to Eski Foça"
+    ]
+  },
+  "Tire": {
+    "coordinates": ["38.0886", "27.7344"],
+    "historical sites": ["Tire Grand Mosque", "Old Ottoman Houses"],
+    "city life": ["Tire Market"],
+    "nature": ["Kaplan Village", "Bozdağ Foothills"],
+    "transport": [
+      "Regional train (Basmane-Tire line) from İzmir Basmane station (~2 hrs)",
+      "Buses from İzmir Otogar to Tire Bus Terminal"
+    ]
+  },
+  "Ödemiş": {
+    "coordinates": ["38.2313", "27.9712"],
+    "historical sites": ["Birgi Town"],
+    "city life": ["Ödemiş Bazaar"],
+    "nature": ["Gölcük Plateau", "Bozdağ"],
+    "transport": [
+      "Regional train (Basmane-Ödemiş line) from İzmir Basmane (~2 hrs)",
+      "Buses from İzmir Otogar (~1.5 hrs)"
+    ]
+  }
+}
