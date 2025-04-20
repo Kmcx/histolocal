@@ -55,9 +55,13 @@ class PromptRequest(BaseModel):
     prompt: str
     context: Optional[dict] = None
 
+def normalize_text(text):
+    return text.lower().replace("ç", "c").replace("ş", "s").replace("ı", "i").replace("ğ", "g").replace("ü", "u").replace("ö", "o")
+
 def parse_locations(prompt: str) -> tuple[list[str], list[str]]:
     print(f"[DEBUG] Running parse_locations with prompt: {prompt}")
-    matched_static = [place for place in fallback_locations if place.lower() in prompt.lower()]
+    normalized_prompt = normalize_text(prompt)
+    matched_static = [place for place in fallback_locations if normalize_text(place) in normalized_prompt]
     matched_chroma = []
 
     try:
@@ -100,14 +104,27 @@ def get_public_transport(locations: List[str]) -> str:
     return "\n".join(suggestions) if suggestions else "Transport info not available."
 
 def get_weather(place: str, date: str) -> str:
-    if not WEATHER_API_KEY:
-        return "Weather API key not set."
-    url = f"http://api.weatherapi.com/v1/forecast.json?key={WEATHER_API_KEY}&q={place}&days=3"
-    res = requests.get(url)
-    if res.status_code != 200:
-        return "Weather info not available."
-    data = res.json()
-    return f"Weather in {place} on {date}: {data['forecast']['forecastday'][0]['day']['condition']['text']} with an average temperature of {data['forecast']['forecastday'][0]['day']['avgtemp_c']}°C."
+    api_key = os.getenv("WEATHER_API_KEY")
+    if not api_key:
+        return "Weather API key not found."
+
+    latlon = fallback_locations.get(place)
+    if not latlon:
+        return f"No coordinates found for {place}."
+
+    lat, lon = latlon
+    url = f"http://api.weatherapi.com/v1/forecast.json?key={api_key}&q={lat},{lon}&dt={date}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+        forecast = data["forecast"]["forecastday"][0]["day"]
+        condition = forecast["condition"]["text"]
+        temp = forecast["avgtemp_c"]
+        return f"{place} on {date}: {condition}, {temp}°C"
+    except Exception as e:
+        print(f"❌ Weather fetch error: {e}")
+        return "Weather data unavailable."
 
 @app.post("/generate-itinerary/")
 async def generate_itinerary(req: PromptRequest):
@@ -119,7 +136,6 @@ async def generate_itinerary(req: PromptRequest):
         print(f"[DEBUG] Incoming prompt: {prompt}")
         print(f"[DEBUG] Context: {ctx}")
 
-        # 🔁 Reset or initial prompt
         if not ctx.get("stage") or re.search(r"(new|reset|again).*?(plan|itinerary|tour)", prompt, re.IGNORECASE):
             return {
                 "response": "Hello!\nI'll assist you step-by-step to create the perfect travel plan in Izmir!\n\nLet's start with which places would you like to visit? (You can type Çeşme, Konak.. etc)",
@@ -127,7 +143,6 @@ async def generate_itinerary(req: PromptRequest):
                 "context": {"stage": "awaiting_locations", "locations": [], "category": ""}
             }
 
-        # ➕ Merge intent
         new_locations, _ = parse_locations(prompt)
         print(f"[DEBUG] Matched locations: {new_locations}")
 
@@ -216,6 +231,7 @@ async def generate_itinerary(req: PromptRequest):
             weather_summary = "\n".join(get_weather(l, ctx["travel_date"]) for l in locs if l in fallback_locations)
 
             itinerary_locations = []
+            detailed_locations = []
             suggested_places = []
             for loc in locs:
                 itinerary_locations.append(loc)
@@ -225,14 +241,16 @@ async def generate_itinerary(req: PromptRequest):
                     actual_key = normalized_keys.get(category)
                     if actual_key:
                         entries = place_category_suggestions[loc][actual_key]
-                        itinerary_locations.extend(entries)
-                        suggested_places.append(f"{loc} ({actual_key}): " + ", ".join(entries))
+                        itinerary_locations.extend([e["name"] for e in entries])
+                        detailed_locations.extend([{"name": e["name"], "lat": e["lat"], "lng": e["lng"]} for e in entries])
+                        suggested_places.append(f"{loc} ({actual_key}): " + ", ".join([e["name"] for e in entries]))
 
             return {
                 "response": f"Here is your itinerary:\n\nItinerary Locations: {', '.join(locs)} (type: {raw_category})\n\nSuggested Places:\n{chr(10).join(suggested_places)}\n\nTransport Info:\n{transport}\n\nWeather Forecast:\n{weather_summary}\n\n{'Route is included.' if route else 'No route available for a single location.'}",
                 "awaiting": None,
                 "context": ctx,
-                "route_geojson": route
+                "route_geojson": route,
+                "locations": detailed_locations
             }
 
     except Exception as e:
@@ -242,4 +260,3 @@ async def generate_itinerary(req: PromptRequest):
             "awaiting": None,
             "context": {}
         }
- 
