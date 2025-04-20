@@ -1,9 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, StyleSheet, TextInput, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BottomNavigationBar } from '../../../components/BottomNavigationBar';
+import { colors } from '../../../styles/theme';
 
 export default function ProfileEditScreen() {
   const { userId } = useLocalSearchParams();
@@ -61,7 +62,7 @@ export default function ProfileEditScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Update Your Profile</Text>
 
@@ -70,24 +71,28 @@ export default function ProfileEditScreen() {
           placeholder="Name"
           value={name}
           onChangeText={setName}
+          placeholderTextColor={colors.secondaryText}
         />
         <TextInput
           style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          placeholderTextColor={colors.secondaryText}
         />
         <TextInput
           style={styles.input}
           placeholder="Bio"
           value={bio}
           onChangeText={setBio}
+          placeholderTextColor={colors.secondaryText}
         />
         <TextInput
           style={styles.input}
           placeholder="Languages (comma separated)"
           value={languages}
           onChangeText={setLanguages}
+          placeholderTextColor={colors.secondaryText}
         />
 
         <Text style={styles.availabilityTitle}>Availability</Text>
@@ -106,7 +111,9 @@ export default function ProfileEditScreen() {
           </TouchableOpacity>
         </View>
 
-        <Button title="Save Changes" onPress={handleUpdate} />
+        <TouchableOpacity style={styles.saveButton} onPress={handleUpdate}>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       <BottomNavigationBar activeTab="profile" />
@@ -116,29 +123,62 @@ export default function ProfileEditScreen() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, paddingBottom: 80 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: colors.text,
+    textAlign: 'center',
+  },
   input: {
+    backgroundColor: colors.card,
+    color: colors.text,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
     borderRadius: 10,
-    padding: 10,
+    padding: 12,
     marginBottom: 15,
   },
-  availabilityTitle: { fontSize: 16, fontWeight: 'bold', marginTop: 20, marginBottom: 10 },
-  availabilityButtons: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  availabilityTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: colors.text,
+  },
+  availabilityButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
   availabilityButton: {
     flex: 1,
     padding: 10,
     marginHorizontal: 5,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: '#ccc',
+    borderColor: colors.border,
     alignItems: 'center',
   },
   activeButton: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
-  buttonText: { color: '#000' },
-  activeButtonText: { color: '#fff', fontWeight: 'bold' },
+  buttonText: {
+    color: colors.text,
+  },
+  activeButtonText: {
+    color: colors.buttonText,
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    backgroundColor: colors.buttonBackground,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: colors.buttonText,
+    fontWeight: 'bold',
+  },
 });

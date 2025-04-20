@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, Image } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { authStyles } from "../../styles/authStyles"; // make sure this path is correct
+import { authStyles } from "../../styles/authStyles";
+import { colors } from "../../styles/theme";
+import logo from "../../assets/logo.png";
 
 export default function AdminLoginScreen() {
   const router = useRouter();
@@ -42,6 +44,11 @@ export default function AdminLoginScreen() {
       resizeMode="cover"
     >
       <View style={authStyles.container}>
+        {/* Logo */}
+        <View style={authStyles.logoWrapper}>
+          <Image source={logo} style={authStyles.logo} resizeMode="contain" />
+        </View>
+
         <Text style={authStyles.title}>Admin Login</Text>
 
         <TextInput
@@ -49,6 +56,7 @@ export default function AdminLoginScreen() {
           placeholder="Admin Email"
           value={email}
           onChangeText={setEmail}
+          placeholderTextColor={colors.secondaryText}
         />
         <TextInput
           style={authStyles.input}
@@ -56,6 +64,7 @@ export default function AdminLoginScreen() {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          placeholderTextColor={colors.secondaryText}
         />
 
         <TouchableOpacity style={authStyles.button} onPress={handleAdminLogin}>
@@ -65,7 +74,6 @@ export default function AdminLoginScreen() {
         <TouchableOpacity onPress={() => router.push('/login')}>
           <Text style={authStyles.link}>Login as User</Text>
         </TouchableOpacity>
-
       </View>
     </ImageBackground>
   );

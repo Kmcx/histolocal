@@ -1,10 +1,10 @@
-// ✅ Güncellenmiş register.tsx (Guide seçildiğinde ek alanları açan sürüm)
-
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, ScrollView, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { authStyles } from "../styles/authStyles";
+import { colors } from "../styles/theme";
+import logo from "../assets/logo.png";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -56,11 +56,15 @@ export default function RegisterScreen() {
       resizeMode="cover"
     >
       <ScrollView contentContainerStyle={authStyles.container}>
+        <View style={authStyles.logoWrapper}>
+          <Image source={logo} style={authStyles.logo} resizeMode="contain" />
+        </View>
+
         <Text style={authStyles.title}>Register</Text>
 
-        <TextInput style={[authStyles.input, { color: 'black' }]} placeholderTextColor="#000" placeholder="Name" value={name} onChangeText={setName} />
-        <TextInput style={[authStyles.input, { color: 'black' }]} placeholderTextColor="#000" placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput style={[authStyles.input, { color: 'black' }]} placeholderTextColor="#000" placeholder="password" secureTextEntry value={password} onChangeText={setPassword} />
+        <TextInput style={authStyles.input} placeholder="Name" value={name} onChangeText={setName} />
+        <TextInput style={authStyles.input} placeholder="Email" value={email} onChangeText={setEmail} />
+        <TextInput style={authStyles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
 
         <View style={styles.roleSelectionContainer}>
           <TouchableOpacity onPress={() => setRole("Visitor")} style={[styles.roleButton, role === "Visitor" && styles.selectedRoleButton]}>
@@ -73,15 +77,15 @@ export default function RegisterScreen() {
 
         {role === "Guide" && (
           <View>
-            <TextInput style={[authStyles.input, { color: 'black' }]} placeholderTextColor="#000" placeholder="Biyografi (bio)" value={bio} onChangeText={setBio} />
-            <TextInput style={[authStyles.input, { color: 'black' }]} placeholderTextColor="#000" placeholder="Languages (Seperate with comas)" value={languages} onChangeText={setLanguages} />
+            <TextInput style={authStyles.input} placeholder="Bio" value={bio} onChangeText={setBio} />
+            <TextInput style={authStyles.input} placeholder="Languages (comma-separated)" value={languages} onChangeText={setLanguages} />
             <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
-              <Text style={{ color: 'black', marginRight: 10 }}>Availability:</Text>
+              <Text style={{ color: colors.text, marginRight: 10 }}>Availability:</Text>
               <TouchableOpacity
                 onPress={() => setAvailability(!availability)}
                 style={[styles.availabilityToggle, availability && styles.availabilityActive]}
               >
-                <Text style={{ color: availability ? 'white' : 'black' }}>{availability ? 'Available' : 'Not Available'}</Text>
+                <Text style={{ color: availability ? 'white' : colors.text }}>{availability ? 'Available' : 'Not Available'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -108,17 +112,17 @@ const styles = StyleSheet.create({
   roleButton: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
     borderRadius: 10,
     paddingVertical: 10,
     marginHorizontal: 5,
     alignItems: 'center',
   },
   selectedRoleButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: colors.primary,
   },
   roleButtonText: {
-    color: 'black',
+    color: colors.text,
     fontSize: 16,
   },
   selectedRoleText: {
@@ -127,12 +131,12 @@ const styles = StyleSheet.create({
   },
   availabilityToggle: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
     padding: 8,
     borderRadius: 8,
   },
   availabilityActive: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 });
