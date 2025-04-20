@@ -17,7 +17,7 @@ export default function LoginScreen() {
     }
 
     try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/auth/login`, {
+      const response = await axios.post(`http://192.168.1.104:5000/api/auth/login`, {
         email,
         password,
       });

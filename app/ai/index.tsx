@@ -14,20 +14,25 @@ import {
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAIChat } from '../contexts/AIChatContext';
+import MapInline from './MapScreen';
 
 type Message = {
   id: string;
-  role: 'user' | 'ai';
+  role: 'user' | 'ai' | 'map';
   text: string;
   timestamp: string;
+  extraData?: { name: string; lat: number; lng: number }[];
 };
 
 export default function AIChatScreen() {
-  const { messages, setMessages } = useAIChat();
+  const { messages, setMessages } = useAIChat() as {
+    messages: Message[];
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  };
   const [input, setInput] = useState('');
-  const [context, setContext] = useState<any>({});
+  const [context, setContext] = useState<any>({ stage: 'awaiting_locations' });
   const [loading, setLoading] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlatList<Message>>(null);
 
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -57,12 +62,10 @@ export default function AIChatScreen() {
     setMessages(prev => [...prev, typingMessage]);
 
     try {
-      console.log("FETCH URL:", `http://localhost:8000/generate-itinerary/`);
-
-      const res = await fetch(`http://localhost:8000/generate-itinerary/`, {
+      const res = await fetch(`http://192.168.1.104:8000/generate-itinerary/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: userMessage.text, context }),
+        body: JSON.stringify({ prompt: userMessage.text, context: { ...context, stage: context.stage || 'awaiting_locations' } }),
       });
 
       const data = await res.json();
@@ -74,10 +77,26 @@ export default function AIChatScreen() {
       };
 
       setContext(data.context || {});
-      setMessages(prev => [...prev.filter(m => m.id !== 'typing'), aiMessage]);
+
+      setMessages(prev => {
+        const cleared = prev.filter(m => m.id !== 'typing');
+        const updated = [...cleared, aiMessage];
+        if (data.locations && Array.isArray(data.locations)) {
+          const mapMessage: Message = {
+            id: Date.now().toString() + '_map',
+            role: 'map',
+            text: '',
+            timestamp: '',
+            extraData: data.locations
+          };
+          return [...updated, mapMessage];
+        } else {
+          return updated;
+        }
+      });
+
     } catch (err) {
       console.error("❌ FETCH ERROR:", err);
-    
       const errorMessage: Message = {
         id: 'error',
         role: 'ai',
@@ -85,8 +104,7 @@ export default function AIChatScreen() {
         timestamp: new Date().toLocaleTimeString(),
       };
       setMessages(prev => [...prev.filter(m => m.id !== 'typing'), errorMessage]);
-    }
-     finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -113,6 +131,13 @@ export default function AIChatScreen() {
   };
 
   const renderItem = ({ item }: { item: Message }) => {
+    if (item.role === 'map') {
+      return (
+        <View style={{ height: 400, marginVertical: 10 }}>
+          <MapInline locations={item.extraData || []} />
+        </View>
+      );
+    }
     const isUser = item.role === 'user';
     return (
       <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
