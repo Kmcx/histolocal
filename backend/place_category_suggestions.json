@@ -1,93 +1,505 @@
 {
-  "Çeşme": {
-    "coordinates": ["38.3232", "26.3052"],
-    "beaches": ["Ilica Beach", "Delikli Koy", "Altinkum Beach", "Ayayorgi Bay"],
-    "historical sites": ["Çeşme Castle", "Erythrai Ancient City (Ildiri)"],
-    
-    "transport": [
-      "From İzmir Otogar: Intercity bus to Çeşme Terminal (~90 min)",
-      "From Üçkuyular: ESHOT bus 984 to Çeşme (~100 min)"
-    ]
-  },
-  "Konak": {
-    "coordinates": ["38.4192", "27.1287"],
-    "historical sites": ["Clock Tower", "Kemeralti Bazaar", "Agora Ancient City", "Historical Elevator"],
-    "city life": ["Alsancak Kordon", "Konak Pier", "Güzelyali Coast"],
-    "transport": [
-      "Accessible via İzmir Metro: Konak Station",
-      "Tram: Konak Tram Line (T1)",
-      "Ferry: From Karsiyaka or Bostanli to Konak Pier"
-    ]
-  },
-  "Bornova": {
-    "coordinates": ["38.4592", "27.2222"],
-    "historical sites": ["Bornova Atatürk House"],
-    "city life": ["Küçükpark", "Büyükpark"],
-    "nature": ["Homeros Valley"],
-    "transport": [
-      "İzmir Metro: Get off at Bornova or Evka 3 stations",
-      "ESHOT buses from Konak/Alsancak to Bornova center"
-    ]
-  },
-  "Karşiyaka": {
-    "coordinates": ["38.4550", "27.1100"],
-    "historical sites": ["Zübeyde Hanim Memorial Tomb"],
-    "city life": ["Bostanli Bazaar", "Mavişehir Marina"],
-    "nature": ["Bostanli Recreation Area"],
-    "transport": [
-      "İZBAN train to Alaybey or Karşiyaka station",
-      "Ferry from Konak to Karşiyaka Terminal",
-      "Tram: Karşiyaka Tram Line (T2)"
-    ]
-  },
-  "Urla": {
-    "coordinates": ["38.3700", "26.7800"],
-    "historical sites": ["Klazomenai Ancient City"],
-    "city life": ["Urla Art Street", "Wine Route Vineyards"],
-    "nature": ["Demircili Bay", "Balikliova", "Yassica Island"],
-    "transport": [
-      "ESHOT Bus 984 from Fahrettin Altay Transfer Center (~70 min)",
-      "Minibuses from Üçkuyular to Urla center"
-    ]
-  },
-  "Seferihisar": {
-    "coordinates": ["38.1966", "26.8372"],
-    "historical sites": ["Teos Ancient City"],
-    "city life": ["Siğacik Old Town"],
-    "nature": ["Akkum Beach", "Doğanbey Village"],
-    "transport": [
-      "ESHOT Bus 985 from Fahrettin Altay to Seferihisar (~80 min)",
-      "Minibus from Üçkuyular or Balçova"
-    ]
-  },
-  "Foça": {
-    "coordinates": ["38.6683", "26.7564"],
-    "historical sites": ["Old Foça Fortifications"],
-    "city life": ["Foça Marina"],
-    "nature": ["Siren Rocks", "Mersinaki Bay"],
-    "transport": [
-      "ESHOT Bus 744 from Hatundere (İZBAN) to Foça (~60 min)",
-      "Minibuses from Menemen to Eski Foça"
-    ]
-  },
-  "Tire": {
-    "coordinates": ["38.0886", "27.7344"],
-    "historical sites": ["Tire Grand Mosque", "Old Ottoman Houses"],
-    "city life": ["Tire Market"],
-    "nature": ["Kaplan Village", "Bozdağ Foothills"],
-    "transport": [
-      "Regional train (Basmane-Tire line) from İzmir Basmane station (~2 hrs)",
-      "Buses from İzmir Otogar to Tire Bus Terminal"
-    ]
-  },
-  "Ödemiş": {
-    "coordinates": ["38.2313", "27.9712"],
-    "historical sites": ["Birgi Town"],
-    "city life": ["Ödemiş Bazaar"],
-    "nature": ["Gölcük Plateau", "Bozdağ"],
-    "transport": [
-      "Regional train (Basmane-Ödemiş line) from İzmir Basmane (~2 hrs)",
-      "Buses from İzmir Otogar (~1.5 hrs)"
-    ]
-  }
+  "Cesme": {
+  "coordinates": ["38.3232", "26.3052"],
+  "city life": [
+    { "name": "Cesme Marina", "lat": 38.3251, "lng": 26.3056 },
+    { "name": "Cesme City Center", "lat": 38.3230, "lng": 26.3052 }
+  ],
+  "beaches": [
+    { "name": "Ilica Beach", "lat": 38.3196, "lng": 26.3708 },
+    { "name": "Delikli Koy", "lat": 38.2975, "lng": 26.4124 },
+    { "name": "Altinkum Beach", "lat": 38.2731, "lng": 26.3254 },
+    { "name": "Ayayorgi Bay", "lat": 38.3171, "lng": 26.2879 }
+  ],
+  "nature": [
+    { "name": "Ilica Beach", "lat": 38.3196, "lng": 26.3708 },
+    { "name": "Delikli Koy", "lat": 38.2975, "lng": 26.4124 },
+    { "name": "Altinkum Beach", "lat": 38.2731, "lng": 26.3254 },
+    { "name": "Ayayorgi Bay", "lat": 38.3171, "lng": 26.2879 }
+  ],
+  "historical sites": [
+    { "name": "Cesme Castle", "lat": 38.3235, "lng": 26.3037 },
+    { "name": "Erythrai Ancient City (Ildiri)", "lat": 38.3839, "lng": 26.4761 }
+  ],
+  "transport": [
+    "From Izmir Otogar: Intercity bus to Cesme Terminal (~90 min)",
+    "From Uckuyular: ESHOT bus 984 to Cesme (~100 min)"
+  ]
+},
+"Konak": {
+  "coordinates": ["38.4192", "27.1287"],
+  "city life": [
+    { "name": "Alsancak Kordon", "lat": 38.4321, "lng": 27.1303 },
+    { "name": "Konak Pier", "lat": 38.4175, "lng": 27.1277 },
+    { "name": "Guzelyali Coast", "lat": 38.3985, "lng": 27.0950 }
+  ],
+  "beaches": [],
+  "nature": [],
+  "historical sites": [
+    { "name": "Clock Tower", "lat": 38.4189, "lng": 27.1287 },
+    { "name": "Kemeralti Bazaar", "lat": 38.4183, "lng": 27.1278 },
+    { "name": "Agora Ancient City", "lat": 38.4222, "lng": 27.1310 },
+    { "name": "Historical Elevator", "lat": 38.4091, "lng": 27.1272 }
+  ],
+  "transport": [
+    "Accessible via Izmir Metro: Konak Station",
+    "Tram: Konak Tram Line (T1)",
+    "Ferry: From Karsiyaka or Bostanli to Konak Pier"
+  ]
+},
+"Bornova": {
+  "coordinates": ["38.4592", "27.2222"],
+  "city life": [
+    { "name": "Kucukpark", "lat": 38.4644, "lng": 27.2236 },
+    { "name": "Buyukpark", "lat": 38.4647, "lng": 27.2218 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Homeros Valley", "lat": 38.4686, "lng": 27.2413 }
+  ],
+  "historical sites": [
+    { "name": "Bornova Ataturk House", "lat": 38.4627, "lng": 27.2215 }
+  ],
+  "transport": [
+    "Izmir Metro: Get off at Bornova or Evka 3 stations",
+    "ESHOT buses from Konak or Alsancak to Bornova center"
+  ]
+},
+"Karsiyaka": {
+  "coordinates": ["38.4550", "27.1100"],
+  "city life": [
+    { "name": "Bostanli Bazaar", "lat": 38.4512, "lng": 27.0953 },
+    { "name": "Mavisehir Marina", "lat": 38.4869, "lng": 27.0437 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Bostanli Recreation Area", "lat": 38.4568, "lng": 27.0978 }
+  ],
+  "historical sites": [
+    { "name": "Zubeyde Hanim Memorial Tomb", "lat": 38.4551, "lng": 27.0924 }
+  ],
+  "transport": [
+    "IZBAN train to Alaybey or Karsiyaka station",
+    "Ferry from Konak to Karsiyaka Terminal",
+    "Tram: Karsiyaka Tram Line (T2)"
+  ]
+},
+"Urla": {
+  "coordinates": ["38.3700", "26.7800"],
+  "city life": [
+    { "name": "Urla Art Street", "lat": 38.3735, "lng": 26.7830 },
+    { "name": "Wine Route Vineyards", "lat": 38.3500, "lng": 26.7210 }
+  ],
+  "beaches": [
+    { "name": "Altinkoy Beach", "lat": 38.3465, "lng": 26.7522 },
+    { "name": "Karantina Island Shore", "lat": 38.3614, "lng": 26.7819 }
+  ],
+  "nature": [
+    { "name": "Demircili Bay", "lat": 38.3670, "lng": 26.6494 },
+    { "name": "Balikliova", "lat": 38.3447, "lng": 26.5936 },
+    { "name": "Yassica Island", "lat": 38.4239, "lng": 26.6717 }
+  ],
+  "historical sites": [
+    { "name": "Klazomenai Ancient City", "lat": 38.3742, "lng": 26.7865 }
+  ],
+  "transport": [
+    "ESHOT Bus 984 from Fahrettin Altay Transfer Center (~70 min)",
+    "Minibuses from Uckuyular to Urla center"
+  ]
+},
+"Seferihisar": {
+  "coordinates": ["38.1966", "26.8372"],
+  "city life": [
+    { "name": "Sigacik Old Town", "lat": 38.1952, "lng": 26.7771 }
+  ],
+  "beaches": [
+    { "name": "Akkum Beach", "lat": 38.1903, "lng": 26.7753 }
+  ],
+  "nature": [
+    { "name": "Doganbey Village", "lat": 38.0824, "lng": 26.8420 }
+  ],
+  "historical sites": [
+    { "name": "Teos Ancient City", "lat": 38.1907, "lng": 26.7776 }
+  ],
+  "transport": [
+    "ESHOT Bus 985 from Fahrettin Altay to Seferihisar (~80 min)",
+    "Minibus from Uckuyular or Balcova"
+  ]
+},
+"Foca": {
+  "coordinates": ["38.6683", "26.7564"],
+  "city life": [
+    { "name": "Foca Marina", "lat": 38.6677, "lng": 26.7535 }
+  ],
+  "beaches": [
+    { "name": "Yeni Foca Beach", "lat": 38.7601, "lng": 26.9522 },
+    { "name": "Eski Foca Public Beach", "lat": 38.6682, "lng": 26.7529 }
+  ],
+  "nature": [
+    { "name": "Siren Rocks", "lat": 38.6890, "lng": 26.7573 },
+    { "name": "Foca Forests", "lat": 38.6831, "lng": 26.7388 }
+  ],
+  "historical sites": [
+    { "name": "Phokaia Ancient City", "lat": 38.6715, "lng": 26.7473 }
+  ],
+  "transport": [
+    "ESHOT Bus 744 from Hatundere (IZBAN) to Foca (~60 min)",
+    "Minibuses from Menemen to Eski Foca"
+  ]
+},
+"Tire": {
+  "coordinates": ["38.0886", "27.7344"],
+  "city life": [
+    { "name": "Tire Market", "lat": 38.0838, "lng": 27.7319 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Kaplan Village", "lat": 38.0950, "lng": 27.7994 },
+    { "name": "Bozdag Foothills", "lat": 38.1669, "lng": 28.0342 }
+  ],
+  "historical sites": [
+    { "name": "Tire Grand Mosque", "lat": 38.0832, "lng": 27.7351 },
+    { "name": "Old Ottoman Houses", "lat": 38.0835, "lng": 27.7350 }
+  ],
+  "transport": [
+    "Regional train (Basmane-Tire line) from Izmir Basmane station (~2 hrs)",
+    "Buses from Izmir Otogar to Tire Bus Terminal"
+  ]
+},
+"Odemis": {
+  "coordinates": ["38.2313", "27.9712"],
+  "city life": [
+    { "name": "Odemis Bazaar", "lat": 38.2285, "lng": 27.9718 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Golcuk Plateau", "lat": 38.2949, "lng": 28.0952 },
+    { "name": "Bozdag", "lat": 38.3215, "lng": 28.0535 }
+  ],
+  "historical sites": [
+    { "name": "Birgi Town", "lat": 38.2546, "lng": 28.0057 }
+  ],
+  "transport": [
+    "Regional train (Basmane-Odemis line) from Izmir Basmane (~2 hrs)",
+    "Buses from Izmir Otogar (~1.5 hrs)"
+  ]
+},
+"Balcova": {
+  "coordinates": ["38.3906", "27.0632"],
+  "city life": [
+    { "name": "IstinyePark Izmir", "lat": 38.3920, "lng": 27.0596 },
+    { "name": "Agora Shopping Mall", "lat": 38.3923, "lng": 27.0639 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Balçova Cable Car", "lat": 38.3909, "lng": 27.0589 }
+  ],
+  "historical sites": [
+    { "name": "Balçova Thermal Springs", "lat": 38.3842, "lng": 27.0571 }
+  ],
+  "transport": [
+    "From Konak: Take ESHOT bus 169 or 480 to Balcova (~25 min)",
+    "From Uckuyular: Transfer via metro or bus (~15 min)"
+  ]
+},
+"Bayindir": {
+  "coordinates": ["38.2242", "27.6473"],
+  "city life": [
+    { "name": "Bayindir Bazaar", "lat": 38.2245, "lng": 27.6481 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Flower Festival Grounds", "lat": 38.2285, "lng": 27.6478 }
+  ],
+  "historical sites": [
+    { "name": "Bayindir Grand Mosque", "lat": 38.2302, "lng": 27.6490 }
+  ],
+  "transport": [
+    "From Izmir Otogar: Intercity bus to Bayindir (~90 min)",
+    "From Basmane: Regional train to Bayindir (~85 min)"
+  ]
+},
+"Bayrakli": {
+  "coordinates": ["38.4533", "27.1799"],
+  "city life": [
+    { "name": "Folkart Towers", "lat": 38.4594, "lng": 27.1833 },
+    { "name": "Bayrakli Courthouse Area", "lat": 38.4609, "lng": 27.1800 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Bayrakli Coastal Road", "lat": 38.4617, "lng": 27.1832 }
+  ],
+  "historical sites": [
+    { "name": "Bayrakli Mound", "lat": 38.4562, "lng": 27.1791 }
+  ],
+  "transport": [
+    "From Alsancak: Take IZBAN train to Bayrakli (~10 min)",
+    "From Konak: ESHOT bus 330 or 543 (~20 min)"
+  ]
+},
+"Bergama": {
+  "coordinates": ["39.1200", "27.1808"],
+  "city life": [
+    { "name": "Bergama Town Center", "lat": 39.1235, "lng": 27.1802 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Bergama Mountains", "lat": 39.1340, "lng": 27.1670 }
+  ],
+  "historical sites": [
+    { "name": "Pergamon Ancient City", "lat": 39.1320, "lng": 27.1830 },
+    { "name": "Asklepion", "lat": 39.1241, "lng": 27.1692 }
+  ],
+  "transport": [
+    "From Izmir Otogar: Direct bus to Bergama (~2.5 hrs)",
+    "From Aliaga: Minibus to Bergama (~60 min)"
+  ]
+},
+"Beydag": {
+  "coordinates": ["38.0866", "28.2104"],
+  "city life": [
+    { "name": "Beydag Central Bazaar", "lat": 38.0881, "lng": 28.2094 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Beydag Dam", "lat": 38.0905, "lng": 28.2063 }
+  ],
+  "historical sites": [
+    { "name": "Historic Beydag Settlements", "lat": 38.0888, "lng": 28.2109 }
+  ],
+  "transport": [
+    "From Odemis: Minibus to Beydag (~45 min)",
+    "From Izmir Otogar: Bus to Odemis, then minibus (~2.5 hrs)"
+  ]
+},
+"Buca": {
+  "coordinates": ["38.3887", "27.1468"],
+  "city life": [
+    { "name": "Sirinyer Bazaar", "lat": 38.3882, "lng": 27.1449 },
+    { "name": "Dokuz Eylul University Area", "lat": 38.3815, "lng": 27.1521 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Hasan Aga Garden", "lat": 38.3886, "lng": 27.1498 },
+    { "name": "Kaynaklar Village", "lat": 38.3205, "lng": 27.1783 }
+  ],
+  "historical sites": [
+    { "name": "Buca Protestant Church", "lat": 38.3841, "lng": 27.1471 },
+    { "name": "Forbes Mansion", "lat": 38.3819, "lng": 27.1407 }
+  ],
+  "transport": [
+    "From Konak: ESHOT buses 304 or 866 to Sirinyer (~25 min)",
+    "From Halkapinar: Take Izmir Metro to Sirinyer Station"
+  ]
+},
+"Cigli": {
+  "coordinates": ["38.4861", "27.0044"],
+  "city life": [
+    { "name": "Kipa Shopping Mall", "lat": 38.4921, "lng": 27.0028 },
+    { "name": "Ataturk Organized Industrial Zone", "lat": 38.4952, "lng": 27.0165 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Izmir Bird Paradise", "lat": 38.5430, "lng": 26.9652 }
+  ],
+  "historical sites": [
+    { "name": "Cigli Urban Memory Museum", "lat": 38.4871, "lng": 27.0033 }
+  ],
+  "transport": [
+    "From Alsancak: IZBAN train to Cigli Station (~25 min)",
+    "From Karsiyaka: ESHOT bus 777 or minibus (~20 min)"
+  ]
+},
+"Gaziemir": {
+  "coordinates": ["38.3310", "27.1297"],
+  "city life": [
+    { "name": "Optimum Shopping Mall", "lat": 38.3313, "lng": 27.1293 },
+    { "name": "Gaziemir Center", "lat": 38.3312, "lng": 27.1270 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Sarnic Picnic Area", "lat": 38.2852, "lng": 27.1723 }
+  ],
+  "historical sites": [
+    { "name": "Historic Gaziemir Train Station", "lat": 38.3242, "lng": 27.1321 }
+  ],
+  "transport": [
+    "From Alsancak: IZBAN train to Gaziemir Station (~30 min)",
+    "From Konak: ESHOT bus 510 or 555 (~40 min)"
+  ]
+},
+"Guzelbahce": {
+  "coordinates": ["38.3834", "26.9613"],
+  "city life": [
+    { "name": "Guzelbahce Coastal Cafes", "lat": 38.3821, "lng": 26.9618 }
+  ],
+  "beaches": [
+    { "name": "Guzelbahce Public Beach", "lat": 38.3796, "lng": 26.9587 }
+  ],
+  "nature": [
+    { "name": "Yelki Forest Area", "lat": 38.3537, "lng": 26.9348 }
+  ],
+  "historical sites": [
+    { "name": "Stone Houses of Yelki Village", "lat": 38.3564, "lng": 26.9381 }
+  ],
+  "transport": [
+    "From Uckuyular: ESHOT bus 985 (~40 min)",
+    "From Fahrettin Altay: Take a minibus to Guzelbahce (~35 min)"
+  ]
+},
+"Karabaglar": {
+  "coordinates": ["38.3882", "27.1074"],
+  "city life": [
+    { "name": "Yesilyurt Center", "lat": 38.3875, "lng": 27.0985 },
+    { "name": "Old Izmir Street", "lat": 38.3900, "lng": 27.1052 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Recreation Area", "lat": 38.3852, "lng": 27.1155 }
+  ],
+  "historical sites": [
+    { "name": "Bozyaka Historic Mosque", "lat": 38.3791, "lng": 27.1128 }
+  ],
+  "transport": [
+    "From Konak: ESHOT bus 18, 104, or 285 (~25 min)",
+    "From Gaziemir: Minibus to Karabaglar (~30 min)"
+  ]
+},
+"Karaburun": {
+  "coordinates": ["38.6370", "26.5122"],
+  "city life": [
+    { "name": "Karaburun Town Center Cafes", "lat": 38.6385, "lng": 26.5127 }
+  ],
+  "beaches": [
+    { "name": "Boyabag Bay", "lat": 38.6481, "lng": 26.5099 },
+    { "name": "Incirlikoy Beach", "lat": 38.6439, "lng": 26.5172 }
+  ],
+  "nature": [
+    { "name": "Mimoza Bay", "lat": 38.6534, "lng": 26.5052 },
+    { "name": "Sarpincik Lighthouse", "lat": 38.6489, "lng": 26.4662 }
+  ],
+  "historical sites": [
+    { "name": "Stone Houses of Karaburun Peninsula", "lat": 38.6393, "lng": 26.5121 }
+  ],
+  "transport": [
+    "From Uckuyular: Minibus to Karaburun (~2.5 hrs)",
+    "From Izmir Otogar: Intercity bus to Mordogan, then minibus to Karaburun (~3 hrs)"
+  ]
+},
+"Menderes": {
+  "coordinates": ["38.2498", "27.1396"],
+  "city life": [
+    { "name": "Menderes Town Center", "lat": 38.2511, "lng": 27.1385 }
+  ],
+  "beaches": [
+    { "name": "Ozdere Public Beach", "lat": 38.0005, "lng": 27.1781 },
+    { "name": "Gumuldur Coast", "lat": 38.0386, "lng": 27.1529 }
+  ],
+  "nature": [
+    { "name": "Golcuk Pond", "lat": 38.2899, "lng": 27.1962 },
+    { "name": "Yikik Mosque Area", "lat": 38.2470, "lng": 27.1487 }
+  ],
+  "historical sites": [
+    { "name": "Colophon Ancient City", "lat": 38.2530, "lng": 27.1392 }
+  ],
+  "transport": [
+    "From Izmir Otogar: Direct bus to Menderes (~70 min)",
+    "From Cumaovasi (IZBAN): Minibus to Menderes (~30 min)"
+  ]
+},
+"Menemen": {
+  "coordinates": ["38.6060", "27.0684"],
+  "city life": [
+    { "name": "Menemen Bazaar", "lat": 38.6055, "lng": 27.0708 },
+    { "name": "Ceramic Workshops", "lat": 38.6079, "lng": 27.0672 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Gediz Delta Bird Sanctuary", "lat": 38.5430, "lng": 26.9652 }
+  ],
+  "historical sites": [
+    { "name": "Tashan Caravanserai", "lat": 38.6070, "lng": 27.0685 }
+  ],
+  "transport": [
+    "From Alsancak: IZBAN train to Menemen Station (~40 min)",
+    "From Karsiyaka: Bus or minibus (~35 min)"
+  ]
+},
+"Narlidere": {
+  "coordinates": ["38.4007", "27.0183"],
+  "city life": [
+    { "name": "Narlidere Coastal Cafes", "lat": 38.3968, "lng": 27.0189 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Narlidere Urban Forest", "lat": 38.4025, "lng": 27.0143 }
+  ],
+  "historical sites": [
+    { "name": "Historic Greek Houses of Narlidere", "lat": 38.3980, "lng": 27.0181 }
+  ],
+  "transport": [
+    "From Uckuyular: ESHOT bus 5 or 510 (~15 min)",
+    "From Fahrettin Altay: Take a minibus to Narlidere (~15 min)"
+  ]
+},
+"Selcuk": {
+  "coordinates": ["37.9514", "27.3682"],
+  "city life": [
+    { "name": "Selcuk Bazaar", "lat": 37.9493, "lng": 27.3681 },
+    { "name": "Sirince Village", "lat": 37.9447, "lng": 27.4183 }
+  ],
+  "beaches": [
+    { "name": "Pamucak Public Beach", "lat": 37.9789, "lng": 27.2501 }
+  ],
+  "nature": [
+    { "name": "Pamucak Beach", "lat": 37.9789, "lng": 27.2501 },
+    { "name": "Ayasuluk Hill", "lat": 37.9498, "lng": 27.3685 }
+  ],
+  "historical sites": [
+    { "name": "Ephesus Ancient City", "lat": 37.9391, "lng": 27.3416 },
+    { "name": "House of Virgin Mary", "lat": 37.9115, "lng": 27.3349 },
+    { "name": "Basilica of St. John", "lat": 37.9512, "lng": 27.3689 }
+  ],
+  "transport": [
+    "From Alsancak: IZBAN train to Selcuk (~90 min)",
+    "From Izmir Otogar: Intercity bus to Selcuk (~75 min)"
+  ]
+},
+"Torbali": {
+  "coordinates": ["38.1496", "27.3575"],
+  "city life": [
+    { "name": "Torbali Town Center", "lat": 38.1483, "lng": 27.3599 }
+  ],
+  "beaches": [],
+  "nature": [
+    { "name": "Bozkoy Picnic Area", "lat": 38.1852, "lng": 27.4087 }
+  ],
+  "historical sites": [
+    { "name": "Metropolis Ancient City", "lat": 38.1404, "lng": 27.3705 }
+  ],
+  "transport": [
+    "From Alsancak: TCDD regional train to Torbali (~60 min)",
+    "From Gaziemir: Minibus to Torbali (~50 min)"
+  ]
+},
+"Aliaga": {
+  "coordinates": ["38.7995", "26.9728"],
+  "city life": [
+    { "name": "Aliaga City Center", "lat": 38.7991, "lng": 26.9725 }
+  ],
+  "beaches": [
+    { "name": "Agapark Beach", "lat": 38.8143, "lng": 26.9732 }
+  ],
+  "nature": [
+    { "name": "Aliaga Coastline Park", "lat": 38.8082, "lng": 26.9750 }
+  ],
+  "historical sites": [
+    { "name": "Kyme Ancient City", "lat": 38.8222, "lng": 26.9601 }
+  ],
+  "transport": [
+    "From Alsancak or Konak: Take IZBAN train to Aliaga Station (~70 min)",
+    "From Izmir Otogar: Intercity bus to Aliaga (~90 min)"
+  ]
+}
+
 }
