@@ -3,19 +3,18 @@ import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react
 import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { colors } from "../../styles/theme";
 
 type UserType = {
-    _id: string;
-    name: string;
-    role: string;
-    isVerified: boolean;
-    banned: boolean;
-  };
-  
-export default function AdminHome() {
-    const [users, setUsers] = useState<UserType[]>([]);
+  _id: string;
+  name: string;
+  role: string;
+  isVerified: boolean;
+  banned: boolean;
+};
 
+export default function AdminHome() {
+  const [users, setUsers] = useState<UserType[]>([]);
   const router = useRouter();
 
   const fetchUsers = async () => {
@@ -38,7 +37,7 @@ export default function AdminHome() {
         headers: { Authorization: `Bearer ${token}` },
       });
       Alert.alert("Success", "User has been banned.");
-      fetchUsers(); // refresh list
+      fetchUsers();
     } catch (error) {
       Alert.alert("Error", "Failed to ban user.");
     }
@@ -50,7 +49,9 @@ export default function AdminHome() {
 
   const renderUser = ({ item }: any) => (
     <View style={styles.userCard}>
-      <Text style={styles.name}>{item.name} ({item.role})</Text>
+      <Text style={styles.name}>
+        {item.name} ({item.role})
+      </Text>
       {item.isVerified && <Text style={styles.verified}>✅ Verified</Text>}
       {item.banned && <Text style={styles.banned}>🚫 Banned</Text>}
 
@@ -72,9 +73,9 @@ export default function AdminHome() {
     <View style={styles.container}>
       <Text style={styles.heading}>Admin Panel – All Users</Text>
       <FlatList
-         data={users}
-         keyExtractor={(item) => item._id}
-         renderItem={({ item }) => renderUser({ item })}
+        data={users}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => renderUser({ item })}
         contentContainerStyle={{ paddingBottom: 50 }}
       />
     </View>
@@ -82,17 +83,45 @@ export default function AdminHome() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1, backgroundColor: "#fff" },
-  heading: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
+  container: {
+    padding: 20,
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  heading: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: colors.text,
+  },
   userCard: {
     padding: 15,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: colors.card,
     marginBottom: 15,
+    borderColor: colors.border,
+    borderWidth: 1,
   },
-  name: { fontSize: 16, fontWeight: "600" },
-  verified: { color: "green", fontWeight: "500" },
-  banned: { color: "red", fontWeight: "500" },
-  actions: { flexDirection: "row", gap: 15, marginTop: 10 },
-  link: { color: "#007BFF", fontWeight: "500" },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  verified: {
+    color: "green",
+    fontWeight: "500",
+  },
+  banned: {
+    color: "red",
+    fontWeight: "500",
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 15,
+    marginTop: 10,
+  },
+  link: {
+    color: colors.primary,
+    fontWeight: "500",
+  },
 });

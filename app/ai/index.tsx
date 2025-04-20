@@ -15,6 +15,9 @@ import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAIChat } from '../contexts/AIChatContext';
 import MapInline from './MapScreen';
+import { colors } from '../../styles/theme';
+import logo from '../../assets/logo.png';
+import { Image } from 'react-native';
 
 type Message = {
   id: string;
@@ -141,12 +144,17 @@ export default function AIChatScreen() {
     const isUser = item.role === 'user';
     return (
       <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
-        <Ionicons
-          name={isUser ? 'person-circle-outline' : 'sparkles-outline'}
-          size={30}
-          color={isUser ? '#4A90E2' : '#aaa'}
-          style={{ marginRight: 8 }}
-        />
+        {isUser ? (
+  <Ionicons
+    name="person-circle-outline"
+    size={30}
+    color="#4A90E2"
+    style={{ marginRight: 8 }}
+  />
+) : (
+  <Image source={logo} style={styles.aiLogo} resizeMode="contain" />
+)}
+
         <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.aiBubble]}>
           <Text style={styles.messageText}>{renderMarkdown(item.text)}</Text>
           {item.timestamp && (
@@ -199,7 +207,7 @@ export default function AIChatScreen() {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
   chatArea: {
     flex: 1,
@@ -218,15 +226,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   userBubble: {
-    backgroundColor: '#DCF8C6',
+    backgroundColor: '#96cdcd',
   },
   aiBubble: {
-    backgroundColor: '#eee',
+    backgroundColor: '#96cdcd',
   },
-  messageText: { fontSize: 16 },
+  messageText: {
+    fontSize: 16,
+    color: '	#1c0f45',
+  },
   timestamp: {
     fontSize: 10,
-    color: '#888',
+    color: 'rgb(255, 255, 255)',
     marginTop: 4,
     textAlign: 'right',
   },
@@ -234,12 +245,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     borderTopWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
+    borderColor: colors.border,
+    backgroundColor: colors.card,
   },
   input: {
     flex: 1,
-    borderColor: '#ccc',
+    backgroundColor: colors.white,
+    borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15,
@@ -247,12 +259,23 @@ const styles = StyleSheet.create({
     minHeight: 40,
     maxHeight: 100,
     marginRight: 10,
+    color: colors.text,
   },
   sendButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: colors.buttonBackground,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
     justifyContent: 'center',
   },
+  aiLogo: {
+    width: 28,
+    height: 28,
+    marginRight: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
+    backgroundColor: colors.card,
+  },
+  
 });

@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Modal,Button } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Modal, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
+import { colors } from '../../styles/theme';
 
 export default function ToursScreen() {
   const [role, setRole] = useState<string | null>(null);
@@ -30,7 +31,6 @@ export default function ToursScreen() {
     };
 
     fetchInitialData();
-
     const interval = setInterval(fetchOngoingToursAndCheck, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -124,83 +124,84 @@ export default function ToursScreen() {
       console.error('Error ending tour:', error);
     }
   };
-  
+
+  const renderTourCard = (item: any, type: 'ongoing' | 'completed') => (
+    <TouchableOpacity
+      key={item._id}
+      style={styles.card}
+      onPress={() => router.push(`/tours/${item._id}`)}
+    >
+      <Text style={styles.cardTitle}>Tour with {role === 'Visitor' ? item.guide.name : item.visitor.name}</Text>
+      <Text style={styles.cardText}>
+        {type === 'completed'
+          ? `Completed on: ${item.completedAt ? new Date(item.completedAt).toLocaleDateString() : 'N/A'}`
+          : `Start: ${new Date(item.startDate).toLocaleDateString()}`}
+      </Text>
+      {type === 'ongoing' && (
+        <Button
+          title="End Tour"
+          color={colors.primary}
+          onPress={() => handleEndTour(item._id)}
+        />
+      )}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
       {role === 'Visitor' && (
         <>
           <Text style={styles.title}>Find a Guide</Text>
-          <TouchableOpacity style={styles.findGuideButton} onPress={fetchGuides}>
-            <Text style={styles.findGuideButtonText}>List Guides</Text>
+          <TouchableOpacity style={styles.button} onPress={fetchGuides}>
+            <Text style={styles.buttonText}>List Guides</Text>
           </TouchableOpacity>
           <FlatList
             data={guides}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <View style={styles.guideCard}>
-                <Text style={styles.guideName}>{item.name}</Text>
-                <TouchableOpacity style={styles.requestButton} onPress={() => sendRequestToGuide(item._id)}>
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+                <TouchableOpacity style={styles.button} onPress={() => sendRequestToGuide(item._id)}>
                   <Text style={styles.buttonText}>Send Request</Text>
                 </TouchableOpacity>
               </View>
             )}
           />
 
-          <Text style={styles.subtitle}>Ongoing Tours</Text>
+          <Text style={styles.sectionTitle}>Ongoing Tours</Text>
           <FlatList
             data={ongoingTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.guideCard}>
-                <TouchableOpacity onPress={() => router.push(`/tours/${item._id}`)}>
-                  <Text>Tour with {role === 'Visitor' ? item.guide.name : item.visitor.name}</Text>
-                  <Text>Start: {new Date(item.startDate).toLocaleDateString()}</Text>
-                </TouchableOpacity>
-                <Button
-                  title="End Tour"
-                  color="#FF3B30"
-                  onPress={() => handleEndTour(item._id)}
-                />
-              </View>
-            )}
+            renderItem={({ item }) => renderTourCard(item, 'ongoing')}
           />
 
-
-          <Text style={styles.subtitle}>Completed Tours</Text>
+          <Text style={styles.sectionTitle}>Completed Tours</Text>
           <FlatList
             data={completedTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.guideCard} onPress={() => router.push(`/tours/${item._id}`)}>
-                <Text>Tour with {role === 'Visitor' ? item.guide.name : item.visitor.name}</Text>
-                <Text>
-                  Completed on: {item.completedAt ? new Date(item.completedAt).toLocaleDateString() : 'Not Available'}
-                </Text>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => renderTourCard(item, 'completed')}
           />
-
         </>
       )}
 
       {role === 'Guide' && (
         <>
           <Text style={styles.title}>Incoming Requests</Text>
-          <TouchableOpacity style={styles.findGuideButton} onPress={fetchRequestsForGuide}>
-            <Text style={styles.findGuideButtonText}>Load Requests</Text>
+          <TouchableOpacity style={styles.button} onPress={fetchRequestsForGuide}>
+            <Text style={styles.buttonText}>Load Requests</Text>
           </TouchableOpacity>
+
           <FlatList
             data={tourRequests}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <View style={styles.requestCard}>
-                <Text>Visitor: {item.visitor.name}</Text>
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity style={styles.acceptButton} onPress={() => handleAccept(item._id)}>
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Visitor: {item.visitor.name}</Text>
+                <View style={styles.row}>
+                  <TouchableOpacity style={[styles.button, { backgroundColor: 'green' }]} onPress={() => handleAccept(item._id)}>
                     <Text style={styles.buttonText}>Accept</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.rejectButton} onPress={() => handleReject(item._id)}>
+                  <TouchableOpacity style={[styles.button, { backgroundColor: 'red' }]} onPress={() => handleReject(item._id)}>
                     <Text style={styles.buttonText}>Reject</Text>
                   </TouchableOpacity>
                 </View>
@@ -208,40 +209,19 @@ export default function ToursScreen() {
             )}
           />
 
-            <Text style={styles.subtitle}>Ongoing Tours</Text>
-            <FlatList
-              data={ongoingTours}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => (
-                <View style={styles.guideCard}>
-                  <TouchableOpacity onPress={() => router.push(`/tours/${item._id}`)}>
-                    <Text>Tour with {role === 'Guide' ? item.guide.name : item.visitor.name}</Text>
-                    <Text>Start: {new Date(item.startDate).toLocaleDateString()}</Text>
-                  </TouchableOpacity>
-                  <Button
-                    title="End Tour"
-                    color="#FF3B30"
-                    onPress={() => handleEndTour(item._id)}
-                  />
-                </View>
-              )}
-            />
+          <Text style={styles.sectionTitle}>Ongoing Tours</Text>
+          <FlatList
+            data={ongoingTours}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => renderTourCard(item, 'ongoing')}
+          />
 
-
-          <Text style={styles.subtitle}>Completed Tours</Text>
+          <Text style={styles.sectionTitle}>Completed Tours</Text>
           <FlatList
             data={completedTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.guideCard} onPress={() => router.push(`/tours/${item._id}`)}>
-                <Text>Tour with {role === 'Guide' ? item.guide.name : item.visitor.name}</Text>
-                <Text>
-                  Completed on: {item.completedAt ? new Date(item.completedAt).toLocaleDateString() : 'Not Available'}
-                </Text>
-              </TouchableOpacity>
-            )}
-/>
-
+            renderItem={({ item }) => renderTourCard(item, 'completed')}
+          />
         </>
       )}
 
@@ -250,13 +230,13 @@ export default function ToursScreen() {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Tour has been completed!</Text>
             <TouchableOpacity
-              style={styles.sendButton}
+              style={[styles.button, { backgroundColor: colors.primary }]}
               onPress={() => {
                 setShowCompletedModal(false);
                 router.push(`/tours/${completedTourToRate._id}`);
               }}
             >
-              <Text style={{ color: '#fff', textAlign: 'center' }}>
+              <Text style={styles.buttonText}>
                 {role === 'Guide' ? 'Rate Visitor' : 'Rate Guide'}
               </Text>
             </TouchableOpacity>
@@ -270,104 +250,75 @@ export default function ToursScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20 
-  },
-  findGuideButton: {
-    backgroundColor: '#4A90E2',
-    padding: 12,
-    borderRadius: 8,
+  container: { flex: 1, padding: 20, backgroundColor: colors.background },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
     marginBottom: 20,
+    color: colors.text,
+    textAlign: "center",
   },
-  findGuideButtonText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    textAlign: 'center' 
-  },
-  guideCard: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 15,
+  sectionTitle: {
+    fontSize: 18,
+    marginTop: 30,
     marginBottom: 10,
-    backgroundColor: '#f9f9f9',
+    fontWeight: 'bold',
+    color: colors.text,
   },
-  guideName: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    marginBottom: 5 
+  button: {
+    backgroundColor: colors.buttonBackground,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 8,
+    minWidth: 120,
   },
-  requestButton: {
-    backgroundColor: '#4A90E2',
-    marginTop: 10,
-    padding: 8,
-    borderRadius: 8,
+  buttonText: {
+    color: colors.buttonText,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
-  buttonText: { 
-    color: '#fff', 
-    textAlign: 'center', 
-    fontWeight: 'bold' 
-  },
-  subtitle: { 
-    fontSize: 18, 
-    marginTop: 30, 
-    marginBottom: 10, 
-    fontWeight: 'bold' 
-  },
-  requestCard: {
+  card: {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-    backgroundColor: '#fafafa',
   },
-  buttonRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    marginTop: 10 
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
   },
-  acceptButton: { 
-    backgroundColor: 'green', 
-    padding: 10, 
-    borderRadius: 8 
+  cardText: {
+    color: colors.secondaryText,
+    marginVertical: 5,
   },
-  rejectButton: { 
-    backgroundColor: 'red', 
-    padding: 10, 
-    borderRadius: 8 
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginTop: 10,
   },
-  modalContainer: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    backgroundColor: 'rgba(0,0,0,0.5)' 
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalContent: { 
-    backgroundColor: '#fff', 
-    padding: 20, 
-    borderRadius: 10, 
-    width: '80%' 
+  modalContent: {
+    backgroundColor: colors.card,
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    borderColor: colors.border,
+    borderWidth: 1,
   },
-  modalTitle: { 
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    marginBottom: 10, 
-    textAlign: 'center' 
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 10,
+    textAlign: 'center',
   },
-  sendButton: { 
-    backgroundColor: '#4A90E2', 
-    padding: 12, 
-    borderRadius: 8, 
-    marginTop: 10 
-  },
-  title: { 
-  fontSize: 22, 
-  fontWeight: 'bold', 
-  marginBottom: 20, 
-  textAlign: 'center' 
-},
-
 });
-

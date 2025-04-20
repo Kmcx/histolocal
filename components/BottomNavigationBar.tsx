@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { colors } from '../styles/theme';
 
 interface BottomNavigationBarProps {
   activeTab: 'home' | 'ai' | 'tours' | 'profile';
@@ -33,9 +34,9 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ active
           <Ionicons
             name={tab.icon as any}
             size={24}
-            color={activeTab === tab.name ? '#4A90E2' : '#777'}
+            color={activeTab === tab.name ? colors.navbarActive : colors.navbarText}
           />
-          <Text style={{ color: activeTab === tab.name ? '#4A90E2' : '#777', fontSize: 12 }}>
+          <Text style={{ color: activeTab === tab.name ? colors.navbarActive : colors.navbarText, fontSize: 12 }}>
             {tab.label}
           </Text>
         </TouchableOpacity>
@@ -45,9 +46,12 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ active
         <Ionicons
           name="person-outline"
           size={24}
-          color={activeTab === 'profile' ? '#4A90E2' : '#777'}
+          color={activeTab === 'profile' ? colors.navbarActive : colors.navbarText}
         />
-        <Text style={{ color: activeTab === 'profile' ? '#4A90E2' : '#777', fontSize: 12 }}>Profil</Text>
+        <Text style={{
+  color: activeTab === 'profile' ? colors.navbarActive : colors.navbarText,
+  fontSize: 12,
+}}>Profil</Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,15 +59,17 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ active
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#fff',
     position: 'absolute',
-    bottom: 0,
-    width: '100%',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 60,
+  backgroundColor: colors.navbarBackground, // ✔️ tema ile uyumlu zemin
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  alignItems: 'center',
+  borderTopWidth: 1,
+  borderTopColor: colors.border, // ✔️ daha yumu
   },
   tabButton: { alignItems: 'center' },
 });
