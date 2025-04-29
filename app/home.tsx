@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { colors } from '../styles/theme';
 import logo from '../assets/logo.png';
+import TopNavbar from '../components/TopNavbar';
 
 const router = useRouter();
 
@@ -57,15 +58,16 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <TopNavbar />
+  
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Logo */}
         <View style={{ alignItems: 'center', marginTop: 10 }}>
           <Image source={logo} style={{ width: 140, height: 140 }} resizeMode="contain" />
         </View>
-
-        {/* Uygulama Adı */}
+  
         <Text style={styles.title}>histolocal</Text>
-
+  
         {/* AI Card */}
         <View style={styles.aiCard}>
           <Text style={styles.sectionTitle}>Plan your tour with AI suggestions</Text>
@@ -73,7 +75,7 @@ export default function HomeScreen() {
             <Text style={styles.primaryButtonText}>Start Planning</Text>
           </TouchableOpacity>
         </View>
-
+  
         {/* Search */}
         <View style={styles.searchContainer}>
           <TextInput
@@ -87,8 +89,8 @@ export default function HomeScreen() {
             <Ionicons name="search" size={20} color="white" />
           </TouchableOpacity>
         </View>
-
-        {/* Guides & Places Yan Yana */}
+  
+        {/* Guides & Places */}
         <View style={styles.rowSection}>
           {/* Guides */}
           <View style={styles.columnSection}>
@@ -97,8 +99,8 @@ export default function HomeScreen() {
               <TouchableOpacity key={item._id} onPress={() => router.push(`/profile/${item._id}`)}>
                 <View style={styles.guideCard}>
                   <View style={styles.cardHeader}>
-                    <Ionicons name="person-circle-outline" size={20} color={colors.primary} />
-                    <View style={{ marginLeft: 6 }}>
+                    <Ionicons name="person-circle-outline" size={28} color={colors.primary} />
+                    <View style={{ marginLeft: 10 }}>
                       <Text style={styles.cardTitle}>{item.name}</Text>
                       <Text style={item.guideDetails.availability ? styles.available : styles.notAvailable}>
                         {item.guideDetails.availability ? 'Available' : 'Not Available'}
@@ -109,14 +111,14 @@ export default function HomeScreen() {
               </TouchableOpacity>
             ))}
           </View>
-
+  
           {/* Places */}
           <View style={styles.columnSection}>
             <Text style={styles.sectionTitle}>Popular places in İzmir</Text>
             {popularPlaces.map((place, index) => (
               <View key={index} style={styles.placeCard}>
                 <View style={styles.cardHeader}>
-                  <FontAwesome5 name="landmark" size={16} color={colors.primary} style={{ marginRight: 6 }} />
+                  <FontAwesome5 name="landmark" size={20} color={colors.primary} style={{ marginRight: 10 }} />
                   <View>
                     <Text style={styles.cardTitle}>{place}</Text>
                     <Text style={styles.cardSubtitle}>Must-see</Text>
@@ -127,10 +129,11 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-
+  
       <BottomNavigationBar activeTab="home" />
     </View>
   );
+  
 }
 
 const styles = StyleSheet.create({

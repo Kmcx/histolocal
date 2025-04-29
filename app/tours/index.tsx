@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Modal, Button } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Modal, Button, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
+import TopNavbar from '../../components/TopNavbar';
 import { colors } from '../../styles/theme';
 
 export default function ToursScreen() {
@@ -149,6 +150,7 @@ export default function ToursScreen() {
 
   return (
     <View style={styles.container}>
+      <TopNavbar />
       {role === 'Visitor' && (
         <>
           <Text style={styles.title}>Find a Guide</Text>
@@ -250,7 +252,7 @@ export default function ToursScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: colors.background },
+  container: { flex: 1, padding: 20,paddingTop: Platform.OS === 'ios' ? 60 : 40, backgroundColor: colors.background },
   title: {
     fontSize: 22,
     fontWeight: "bold",

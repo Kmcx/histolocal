@@ -25,7 +25,7 @@ export default function HomeScreen() {
           <Image source={logo} style={styles.logo} resizeMode="contain" />
 
           {/* Başlık */}
-          <Text style={styles.appTitle}>histolocal</Text>
+          <Text style={styles.appTitle}>Histolocal</Text>
 
           {/* Slogan */}
           <Text style={styles.slogan}>Explore the city, smartly planned.</Text>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 10,
     letterSpacing: 1,
-    textTransform: 'uppercase',
+    // textTransform: 'lowercase',
   },
   slogan: {
     color: colors.primary,

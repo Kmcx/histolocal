@@ -22,7 +22,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({ active
   };
 
   const tabs = [
-    { name: 'home', icon: 'home-outline', route: '/home', label: 'Anasayfa' },
+    { name: 'home', icon: 'home-outline', route: '/home', label: 'Home' },
     { name: 'ai', icon: 'sparkles-outline', route: '/ai', label: 'AI' },
     { name: 'tours', icon: 'map-outline', route: '/tours', label: 'Tours' },
   ];

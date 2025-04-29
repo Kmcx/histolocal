@@ -10,6 +10,9 @@ import {
   Platform,
   ActivityIndicator,
   Linking,
+  Image,
+  Keyboard,
+  KeyboardEvent,
 } from 'react-native';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +20,10 @@ import { useAIChat } from '../contexts/AIChatContext';
 import MapInline from './MapScreen';
 import { colors } from '../../styles/theme';
 import logo from '../../assets/logo.png';
-import { Image } from 'react-native';
+import TopNavbar from '../../components/TopNavbar';
+
+const NAVBAR_HEIGHT = 60;
+const TOPNAV_HEIGHT = Platform.OS === 'ios' ? 60 : 40;
 
 type Message = {
   id: string;
@@ -32,10 +38,27 @@ export default function AIChatScreen() {
     messages: Message[];
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   };
+
   const [input, setInput] = useState('');
   const [context, setContext] = useState<any>({ stage: 'awaiting_locations' });
   const [loading, setLoading] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(NAVBAR_HEIGHT);
   const flatListRef = useRef<FlatList<Message>>(null);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
+      setKeyboardOffset(e.endCoordinates.height);
+    });
+
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardOffset(NAVBAR_HEIGHT);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -52,7 +75,7 @@ export default function AIChatScreen() {
       timestamp,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev: Message[]) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
@@ -62,13 +85,13 @@ export default function AIChatScreen() {
       text: 'Typing...',
       timestamp: '',
     };
-    setMessages(prev => [...prev, typingMessage]);
+    setMessages((prev: Message[]) => [...prev, typingMessage]);
 
     try {
-      const res = await fetch(`http://192.168.1.104:8000/generate-itinerary/`, {
+      const res = await fetch(`http://172.20.10.8:8000/generate-itinerary/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: userMessage.text, context: { ...context, stage: context.stage || 'awaiting_locations' } }),
+        body: JSON.stringify({ prompt: userMessage.text, context }),
       });
 
       const data = await res.json();
@@ -81,7 +104,7 @@ export default function AIChatScreen() {
 
       setContext(data.context || {});
 
-      setMessages(prev => {
+      setMessages((prev: Message[]) => {
         const cleared = prev.filter(m => m.id !== 'typing');
         const updated = [...cleared, aiMessage];
         if (data.locations && Array.isArray(data.locations)) {
@@ -99,14 +122,13 @@ export default function AIChatScreen() {
       });
 
     } catch (err) {
-      console.error("❌ FETCH ERROR:", err);
       const errorMessage: Message = {
         id: 'error',
         role: 'ai',
         text: 'Error: Could not connect to AI server.',
         timestamp: new Date().toLocaleTimeString(),
       };
-      setMessages(prev => [...prev.filter(m => m.id !== 'typing'), errorMessage]);
+      setMessages((prev: Message[]) => [...prev.filter(m => m.id !== 'typing'), errorMessage]);
     } finally {
       setLoading(false);
     }
@@ -145,16 +167,15 @@ export default function AIChatScreen() {
     return (
       <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
         {isUser ? (
-  <Ionicons
-    name="person-circle-outline"
-    size={30}
-    color="#4A90E2"
-    style={{ marginRight: 8 }}
-  />
-) : (
-  <Image source={logo} style={styles.aiLogo} resizeMode="contain" />
-)}
-
+          <Ionicons
+            name="person-circle-outline"
+            size={30}
+            color="#4A90E2"
+            style={{ marginRight: 8 }}
+          />
+        ) : (
+          <Image source={logo} style={styles.aiLogo} resizeMode="contain" />
+        )}
         <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.aiBubble]}>
           <Text style={styles.messageText}>{renderMarkdown(item.text)}</Text>
           {item.timestamp && (
@@ -172,31 +193,31 @@ export default function AIChatScreen() {
     <KeyboardAvoidingView
       style={styles.wrapper}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={100}
     >
+      <TopNavbar /> {/* ✅ TopNavbar en üstte sabit */}
       <View style={styles.chatArea}>
         <FlatList
           ref={flatListRef}
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerStyle={{ padding: 10 }}
+          contentContainerStyle={{ padding: 10, paddingBottom: 140 }}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
+      </View>
 
-        <View style={styles.inputArea}>
-          <TextInput
-            value={input}
-            onChangeText={setInput}
-            placeholder="Type your message..."
-            style={styles.input}
-            multiline
-            onSubmitEditing={sendMessage}
-          />
-          <TouchableOpacity onPress={sendMessage} style={styles.sendButton} disabled={loading}>
-            <Text style={{ color: '#fff', fontWeight: 'bold' }}>{loading ? '...' : 'Send'}</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.inputArea, { bottom: keyboardOffset }]}>
+        <TextInput
+          value={input}
+          onChangeText={setInput}
+          placeholder="Type your message..."
+          style={styles.input}
+          multiline
+          onSubmitEditing={sendMessage}
+        />
+        <TouchableOpacity onPress={sendMessage} style={styles.sendButton} disabled={loading}>
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>{loading ? '...' : 'Send'}</Text>
+        </TouchableOpacity>
       </View>
 
       <BottomNavigationBar activeTab="ai" />
@@ -211,7 +232,7 @@ const styles = StyleSheet.create({
   },
   chatArea: {
     flex: 1,
-    marginBottom: 60,
+    paddingTop: TOPNAV_HEIGHT, // ✅ TopNavbar yüksekliği kadar boşluk
   },
   messageContainer: {
     flexDirection: 'row',
@@ -233,7 +254,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
-    color: '	#1c0f45',
+    color: '#1c0f45',
   },
   timestamp: {
     fontSize: 10,
@@ -242,11 +263,15 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   inputArea: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     padding: 10,
     borderTopWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.card,
+    zIndex: 10,
   },
   input: {
     flex: 1,
@@ -277,5 +302,4 @@ const styles = StyleSheet.create({
     borderColor: '#e8e8e8',
     backgroundColor: colors.card,
   },
-  
 });
