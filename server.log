@@ -1,0 +1,112 @@
+2025-03-11 21:31:34,274 - INFO - Processing request: What are the best historical places in Rome?
+2025-03-11 21:31:36,345 - ERROR - Error in Ollama chat: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2025-03-12 20:21:52,831 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:24:19,863 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:24:57,149 - INFO - Received request for historical tour.
+2025-03-12 20:24:57,149 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 20:24:57,580 - INFO - Fetching coordinates for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.'].
+2025-03-12 20:24:57,930 - ERROR - Error generating tour: Expecting value: line 1 column 1 (char 0)
+2025-03-12 20:27:05,290 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:27:05,539 - INFO - Received request for historical tour.
+2025-03-12 20:27:05,539 - ERROR - Error generating tour: name 'route_planner' is not defined
+2025-03-12 20:39:46,056 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:39:55,772 - INFO - Received request for historical tour.
+2025-03-12 20:39:55,772 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 20:39:56,183 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:39:56,482 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:39:56,483 - WARNING - Not enough locations to generate a route.
+2025-03-12 20:39:56,483 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 20:41:30,876 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:41:34,081 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:51:03,840 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 20:51:29,941 - INFO - Received request for historical tour.
+2025-03-12 20:51:29,941 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 20:51:30,301 - WARNING - Add of existing embedding ID: 1
+2025-03-12 20:51:30,302 - WARNING - Add of existing embedding ID: 2
+2025-03-12 20:51:30,302 - WARNING - Add of existing embedding ID: 3
+2025-03-12 20:51:30,302 - WARNING - Add of existing embedding ID: 4
+2025-03-12 20:51:30,302 - WARNING - Add of existing embedding ID: 5
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 6
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 1
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 2
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 3
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 4
+2025-03-12 20:51:30,303 - WARNING - Add of existing embedding ID: 5
+2025-03-12 20:51:30,304 - WARNING - Add of existing embedding ID: 6
+2025-03-12 20:51:30,322 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:51:30,525 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:51:30,525 - WARNING - Not enough locations to generate a route.
+2025-03-12 20:51:30,526 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 20:58:18,713 - INFO - Received request for historical tour.
+2025-03-12 20:58:18,713 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 20:58:18,761 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:58:18,961 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 20:58:18,962 - WARNING - Not enough locations to generate a route.
+2025-03-12 20:58:18,963 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 20:59:50,406 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 21:00:47,005 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 21:00:47,195 - INFO - Fetching coordinates for: Konak Square
+2025-03-12 21:00:47,447 - ERROR - OSM API returned error 403 for Konak Square
+2025-03-12 21:41:25,942 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 21:42:44,493 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 21:43:01,689 - INFO - Received request for historical tour.
+2025-03-12 21:43:01,689 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 21:43:01,733 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:01,934 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:01,935 - WARNING - Not enough locations to generate a route.
+2025-03-12 21:43:01,935 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 21:43:05,141 - INFO - Received request for historical tour.
+2025-03-12 21:43:05,141 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 21:43:05,188 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:05,364 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:05,364 - WARNING - Not enough locations to generate a route.
+2025-03-12 21:43:05,365 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 21:43:21,292 - INFO - Received request for historical tour.
+2025-03-12 21:43:21,292 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 21:43:21,335 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:21,510 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:43:21,510 - WARNING - Not enough locations to generate a route.
+2025-03-12 21:43:21,511 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 21:44:33,008 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 21:44:38,998 - INFO - Received request for historical tour.
+2025-03-12 21:44:38,998 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 21:44:39,045 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:44:39,222 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:44:39,223 - WARNING - Not enough locations to generate a route.
+2025-03-12 21:44:39,223 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 21:44:40,229 - INFO - Received request for historical tour.
+2025-03-12 21:44:40,229 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 21:44:40,274 - INFO - Fetching coordinates for: ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:44:42,227 - ERROR - OSM API returned error 403 for ['Konak Square is the main hub of Izmir, a great starting point for tourists.', 'Ephesus is an ancient city near Izmir, known for its well-preserved ruins.', 'Izmir Clock Tower is a famous landmark in Konak Square.', 'Agora of Smyrna is an ancient Roman marketplace, located near Konak.']
+2025-03-12 21:44:42,229 - WARNING - Not enough locations to generate a route.
+2025-03-12 21:44:42,230 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 21:51:25,267 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 23:01:34,434 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 23:02:39,206 - INFO - Received request for historical tour.
+2025-03-12 23:02:39,206 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 23:02:39,621 - INFO - Retrieved places: ['Konak Square', 'Ephesus', 'Izmir Clock Tower', 'Agora of Smyrna']
+2025-03-12 23:02:39,621 - INFO - Fetching coordinates for: Konak Square
+2025-03-12 23:02:40,823 - ERROR - OSM API blocked request (403) for Konak Square. Too many requests.
+2025-03-12 23:02:40,824 - INFO - Fetching coordinates for: Ephesus
+2025-03-12 23:02:43,829 - ERROR - OSM API blocked request (403) for Ephesus. Too many requests.
+2025-03-12 23:02:43,830 - INFO - Fetching coordinates for: Izmir Clock Tower
+2025-03-12 23:02:46,832 - ERROR - OSM API blocked request (403) for Izmir Clock Tower. Too many requests.
+2025-03-12 23:02:46,834 - INFO - Fetching coordinates for: Agora of Smyrna
+2025-03-12 23:02:49,837 - ERROR - OSM API blocked request (403) for Agora of Smyrna. Too many requests.
+2025-03-12 23:02:49,838 - WARNING - Not enough locations to generate a route.
+2025-03-12 23:02:49,838 - ERROR - Error generating tour: 400: Not enough locations to create a route.
+2025-03-12 23:06:33,356 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 23:07:59,776 - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-03-12 23:08:03,907 - INFO - Received request for historical tour.
+2025-03-12 23:08:03,908 - INFO - Fetching historical sites from ChromaDB.
+2025-03-12 23:08:04,229 - INFO - Retrieved places: ['Konak Square', 'Ephesus', 'Izmir Clock Tower', 'Agora of Smyrna']
+2025-03-12 23:08:06,230 - INFO - Fetching coordinates for: Konak Square
+2025-03-12 23:08:07,485 - ERROR - OSM API blocked request (403) for Konak Square. Too many requests.
+2025-03-12 23:08:09,486 - INFO - Fetching coordinates for: Ephesus
+2025-03-12 23:08:10,741 - ERROR - OSM API blocked request (403) for Ephesus. Too many requests.
+2025-03-12 23:08:12,742 - INFO - Fetching coordinates for: Izmir Clock Tower
+2025-03-12 23:08:13,924 - ERROR - OSM API blocked request (403) for Izmir Clock Tower. Too many requests.
+2025-03-12 23:08:15,926 - INFO - Fetching coordinates for: Agora of Smyrna
+2025-03-12 23:08:17,184 - ERROR - OSM API blocked request (403) for Agora of Smyrna. Too many requests.
+2025-03-12 23:08:17,185 - WARNING - Not enough locations to generate a route.
+2025-03-12 23:08:17,185 - ERROR - Error generating tour: 400: Not enough locations to create a route.
