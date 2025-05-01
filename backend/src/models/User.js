@@ -7,12 +7,18 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['Visitor', 'Guide'], default: 'Visitor' },
     isVerified: { type: Boolean, default: false },
+    isAdmin: { type: Boolean, default: false }, 
+    banned: { type: Boolean, default: false },
+    bio: { type: String, trim: true, default: "" },
+    languages: [{ type: String, default: [] }],
+    idImageUrl: { type: String, default: "" },
+
     guideDetails: {
-        bio: { type: String, trim: true },
-        languages: [{ type: String }], //  "English", "Turkish"
-        availability: { type: String }, // "Weekends Only"
+        availability: { type: Boolean, default: true },
+        location: { type: String, trim: true, default: "" }, // Added for future use
     },
 });
+
 
 //  Hashing password
 userSchema.pre('save', async function (next) {

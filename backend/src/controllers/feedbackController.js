@@ -2,21 +2,22 @@ const Feedback = require('../models/Feedback');
 
 // Geri Bildirim Oluşturma
 const createFeedback = async (req, res) => {
-    const { guideId, rating, comment } = req.body;
-
+    const { toUser, rating, comment, tourId } = req.body;
     try {
-        const feedback = await Feedback.create({
-            user: req.user._id,
-            guide: guideId,
-            rating,
-            comment,
-        });
-
-        res.status(201).json(feedback);
+      const feedback = await Feedback.create({
+        fromUser: req.user._id,
+        toUser,
+        rating,
+        comment,
+        tourId,   // ✅ turId kaydı
+      });
+      res.status(201).json(feedback);
     } catch (error) {
-        res.status(500).json({ message: 'Error submitting feedback', error: error.message });
+      res.status(500).json({ message: 'Error submitting feedback', error: error.message });
     }
-};
+  };
+  
+  
 
 // Rehber için Tüm Geri Bildirimleri Getir
 const getGuideFeedback = async (req, res) => {
@@ -30,4 +31,48 @@ const getGuideFeedback = async (req, res) => {
     }
 };
 
-module.exports = { createFeedback, getGuideFeedback };
+const getUserFeedback = async (req, res) => {
+    const { userId } = req.params;
+    try {
+      const feedbacks = await Feedback.find({ toUser: userId }).populate('fromUser', 'name');
+      res.status(200).json(feedbacks);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching feedback', error: error.message });
+    }
+  };
+
+  const getFeedbackForTour = async (req, res) => {
+    try {
+      const tour = await Tour.findById(req.params.tourId);
+      if (!tour) return res.status(404).json({ message: 'Tour not found' });
+  
+      const currentUserId = req.user._id;
+      const targetUserId = tour.visitor.equals(currentUserId) ? tour.guide : tour.visitor;
+  
+      const feedback = await Feedback.findOne({
+        fromUser: currentUserId,
+        toUser: targetUserId,
+      });
+  
+      res.status(200).json(feedback);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching feedback', error: error.message });
+    }
+  };
+  const getFeedbacksByTour = async (req, res) => {
+    try {
+      const feedbacks = await Feedback.find({ tourId: req.params.tourId }).populate('fromUser', 'name');
+      res.status(200).json(feedbacks);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching feedbacks', error: error.message });
+    }
+  };
+  
+  
+  
+
+module.exports = { createFeedback, 
+    getGuideFeedback, 
+    getUserFeedback,
+    getFeedbackForTour,
+    getFeedbacksByTour };

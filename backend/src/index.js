@@ -9,7 +9,7 @@ const db = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const guideRoutes = require('./routes/guideRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
+const tourRoutes = require('./routes/tourRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes'); 
 
@@ -17,7 +17,7 @@ const cors = require('cors');
 
 // CORS Middleware
 app.use(cors({
-    origin: 'http://localhost:8081', // Frontend URL
+    origin: ['http://localhost:8081',"http://localhost:8082"], // Frontend URL
     methods: 'GET,POST,PUT,DELETE', 
     credentials: true, 
 }));
@@ -54,7 +54,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/guides', guideRoutes);
 
 //Booking Routes
-app.use('/api/bookings', bookingRoutes);
+app.use('/api/tours', tourRoutes);
 
 //Admin Routes
 app.use('/api/admin', adminRoutes);

@@ -88,7 +88,7 @@ export default function AIChatScreen() {
     setMessages((prev: Message[]) => [...prev, typingMessage]);
 
     try {
-      const res = await fetch(`http://172.20.10.8:8000/generate-itinerary/`, {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_OLLAMA_SERVER_API_URL}generate-itinerary/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: userMessage.text, context }),

@@ -1,7 +1,12 @@
 const express = require('express');
-const { getProfile, updateProfile } = require('../controllers/profileController');
+const { getProfile, updateProfile, uploadIDImage } = require('../controllers/profileController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+
+
+
+router.post("/upload-id", protect, uploadIDImage);
+
 
 // Profil Görüntüleme
 /**
@@ -18,17 +23,24 @@ const router = express.Router();
  *       401:
  *         description: Unauthorized
  */
-router.get('/', protect, getProfile);
+router.get('/:userId', protect, getProfile);
 
 // update profile
 /**
  * @swagger
- * /api/profile:
+ * /api/profile/{userId}:
  *   put:
- *     summary: Update user profile
+ *     summary: Update user profile by user ID
  *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user to update
  *     requestBody:
  *       required: true
  *       content:
@@ -53,12 +65,15 @@ router.get('/', protect, getProfile);
  *                       type: string
  *                   availability:
  *                     type: string
+ *                   location:
+ *                     type: string
  *     responses:
  *       200:
  *         description: User profile updated successfully
  *       401:
  *         description: Unauthorized
  */
-router.put('/', protect, updateProfile);
+router.put('/edit/:userId', updateProfile);
+
 
 module.exports = router;

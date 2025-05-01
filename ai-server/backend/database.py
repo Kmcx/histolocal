@@ -1,20 +1,29 @@
 import chromadb
 
-# Initialize vector database
-db = chromadb.PersistentClient(path="./histolocal_db")
-collection = db.get_or_create_collection("izmir_locations")
+client = chromadb.PersistentClient(path="./histolocal_db")
+collection = client.get_or_create_collection("izmir_locations")
 
-# Store historical locations
+# Clear existing for testing (optional)
+# collection.delete()
+
+# Example data
+historical_sites = [
+    "Agora of Smyrna is an ancient Roman marketplace near Konak.",
+    "Ephesus was a major Greek city with well-preserved ruins.",
+    "Çeşme is a coastal town known for beaches, windsurfing and historical castles.",
+    "Karsiyaka offers scenic ferry rides, parks, and vibrant markets.",
+    "Alsancak is famous for its nightlife, waterfront, and historic architecture.",
+    "Kemeralti is a historical bazaar with Ottoman-era buildings and narrow alleys.",
+    "Kadifekale is a hilltop fortress with panoramic views and Roman history.",
+    "Foça is a small seaside town with ancient roots and serene beaches.",
+    "Şirince is a wine-producing village with Greek architecture and peaceful vibes.",
+    "Urla is known for vineyards, farm-to-table cuisine, and art villages."
+]
+
+# Add to ChromaDB
 collection.add(
-    documents=[
-        "Konak Square is the main hub of Izmir, a great starting point for tourists.",
-        "Agora of Smyrna is an ancient Roman marketplace, located near Konak.",
-        "Kadifekale is a fortress with amazing views, about 15 minutes from Konak by taxi.",
-        "Izmir Clock Tower is a famous landmark in Konak Square.",
-        "Kordon is a beautiful waterfront area, reachable in 15 minutes from Alsancak.",
-        "Ephesus is an ancient city near Izmir, known for its well-preserved ruins."
-    ],
-    ids=["1", "2", "3", "4", "5", "6"]
+    documents=historical_sites,
+    ids=[str(i + 1) for i in range(len(historical_sites))]
 )
 
-print("Historical sites stored in ChromaDB ✅")
+print("✅ Historical locations stored in ChromaDB.")

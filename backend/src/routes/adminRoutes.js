@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyGuide } = require('../controllers/adminController');
+const { verifyGuide, loginAdmin, getAllUsers, banUser } = require('../controllers/adminController');
 const { protect } = require('../middleware/authMiddleware'); 
 const router = express.Router();
 
@@ -59,5 +59,11 @@ const router = express.Router();
  */
 // guide verify route
 router.post('/verify-guide', protect, verifyGuide);
+
+router.post('/login', loginAdmin);
+
+router.get('/users', protect, getAllUsers); // 🆕 Get all users
+
+router.delete('/ban/:userId', protect, banUser);
 
 module.exports = router;
