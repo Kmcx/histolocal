@@ -2,11 +2,11 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Image 
 import { useState, useEffect } from 'react';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { BottomNavigationBar } from '../components/BottomNavigationBar';
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { colors } from '../styles/theme';
 import logo from '../assets/logo.png';
 import TopNavbar from '../components/TopNavbar';
+import { apiClient } from "@lib/axiosInstance";
 
 const router = useRouter();
 
@@ -35,19 +35,21 @@ export default function HomeScreen() {
   const [guides, setGuides] = useState<GuideItem[]>([]);
   const [filteredGuides, setFilteredGuides] = useState<GuideItem[]>([]);
 
-  useEffect(() => {
-    const fetchAllGuides = async () => {
-      try {
-        const response = await axios.get<GuideItem[]>(`${process.env.EXPO_PUBLIC_API_URL}api/guides/list`);
-        setGuides(response.data);
-        setFilteredGuides(response.data);
-      } catch (error) {
-        console.error('Error fetching guides:', error);
-      }
-    };
+useEffect(() => {
+  const fetchAllGuides = async () => {
+    try {
+      const response = await apiClient.get<GuideItem[]>("/api/guides/list");
+      console.log("response.data", response.data);
+      setGuides(response.data);
+      setFilteredGuides(response.data);
+    } catch (error) {
+      console.error("Error fetching guides:", error);
+      // Hata interceptor tarafından Alert ile gösterilecek
+    }
+  };
 
-    fetchAllGuides();
-  }, []);
+  fetchAllGuides();
+}, []);
 
   const handleSearch = () => {
     const filtered = guides.filter(guide =>

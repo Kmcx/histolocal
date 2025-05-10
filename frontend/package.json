@@ -9,7 +9,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "start:web": "cp .env.web .env && expo start --web",
+    "start:mobile": "cp .env.mobile .env && expo start --lan"
   },
   "jest": {
     "preset": "jest-expo"

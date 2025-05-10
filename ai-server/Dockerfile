@@ -1,10 +1,14 @@
-FROM python:3.10
-
+FROM python:3.11
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# requirements dosyasını özel olarak belirt
+COPY backend/requirements.txt backend/requirements.txt
 
+# requirements içeriğini yükle
+RUN pip install -r backend/requirements.txt
+
+# geri kalan tüm dosyaları kopyala
 COPY . .
 
-CMD ["uvicorn", "ollama_server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Uvicorn ile çalıştır (uyarlayabilirsin)
+CMD ["uvicorn", "backend.backend:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

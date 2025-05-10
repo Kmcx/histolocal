@@ -15,11 +15,20 @@ const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const cors = require('cors');
 
-// CORS Middleware
+// CORS 
+
+const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [];
+
 app.use(cors({
-    origin: ['http://localhost:8081',"http://localhost:8082"], // Frontend URL
-    methods: 'GET,POST,PUT,DELETE', 
-    credentials: true, 
+  origin: function (origin, callback) {
+    // Tarayıcılar origin göndermeyebilir (örneğin Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: No access for origin ${origin}`));
+    }
+  },
+  credentials: true,
 }));
 
 

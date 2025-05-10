@@ -1,0 +1,9 @@
+# Geliştirme ve cache dosyaları
+node_modules
+.expo
+.git
+*.log
+
+# IDE / sistem dosyaları
+.vscode
+.DS_Store

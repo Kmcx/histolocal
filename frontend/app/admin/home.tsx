@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
-import axios from "axios";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../styles/theme";
+import { apiClient } from "@lib/axiosInstance";
 
 type UserType = {
   _id: string;
@@ -18,11 +18,8 @@ export default function AdminHome() {
   const router = useRouter();
 
   const fetchUsers = async () => {
-    const token = await AsyncStorage.getItem("adminToken");
     try {
-      const res = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/admin/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiClient.get("/api/admin/users");
       setUsers(res.data);
     } catch (error) {
       console.error("Failed to load users:", error);
@@ -30,12 +27,15 @@ export default function AdminHome() {
     }
   };
 
+  const handleAdminLogout = async () => {
+    await AsyncStorage.removeItem("adminToken");
+    Alert.alert("Logged out", "You have been logged out as Admin.");
+    router.push("/login");
+  };
+
   const banUser = async (userId: string) => {
-    const token = await AsyncStorage.getItem("adminToken");
     try {
-      await axios.delete(`${process.env.EXPO_PUBLIC_API_URL}api/admin/ban/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete(`/api/admin/ban/${userId}`);
       Alert.alert("Success", "User has been banned.");
       fetchUsers();
     } catch (error) {
@@ -72,6 +72,14 @@ export default function AdminHome() {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Admin Panel – All Users</Text>
+
+      <TouchableOpacity
+        onPress={handleAdminLogout}
+        style={{ alignSelf: "flex-end", marginBottom: 10 }}
+      >
+        <Text style={{ color: "red", fontWeight: "600" }}>Logout</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={users}
         keyExtractor={(item) => item._id}

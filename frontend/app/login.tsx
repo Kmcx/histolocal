@@ -1,39 +1,41 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, Image } from "react-native";
 import { useRouter } from "expo-router";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authStyles } from "../styles/authStyles";
 import logo from "../assets/logo.png";
+import { apiClient } from "@lib/axiosInstance";
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+
+ const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter email and password.");
       return;
     }
 
     try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/auth/login`, {
+      const response = await apiClient.post("/api/auth/login", {
         email,
         password,
       });
 
-      if (response.data.token) {
-        await AsyncStorage.setItem('userToken', response.data.token);
-        await AsyncStorage.setItem('userId', response.data._id);
+      const { token, _id } = response.data;
+
+      if (token) {
+        await AsyncStorage.setItem("userToken", token);
+        await AsyncStorage.setItem("userId", _id);
         Alert.alert("Success", "Login successful!");
         router.push("/home");
       } else {
         Alert.alert("Error", "Token not received.");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      Alert.alert("Error", "Failed to login. Please try again.");
+      console.error("Login failed:", error);
     }
   };
 

@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Modal, Button, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import TopNavbar from '../../components/TopNavbar';
 import { colors } from '../../styles/theme';
+import { apiClient } from "@lib/axiosInstance";
 
 export default function ToursScreen() {
   const [role, setRole] = useState<string | null>(null);
@@ -18,18 +18,16 @@ export default function ToursScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
-      if (token && userId) {
-        const profileResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRole(profileResponse.data.role);
-        fetchOngoingToursAndCheck();
-        fetchCompletedTours();
-      }
-    };
+  const fetchInitialData = async () => {
+    const userId = await AsyncStorage.getItem("userId");
+    if (userId) {
+      const profileResponse = await apiClient.get(`/api/profile/${userId}`);
+      console.log("User role:", profileResponse.data.role); // DEBUG LOG
+      setRole(profileResponse.data.role);
+      fetchOngoingToursAndCheck();
+      fetchCompletedTours();
+    }
+  };
 
     fetchInitialData();
     const interval = setInterval(fetchOngoingToursAndCheck, 5000);
@@ -37,94 +35,86 @@ export default function ToursScreen() {
   }, []);
 
   const fetchOngoingToursAndCheck = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/tours/ongoing`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  try {
+    const response = await apiClient.get("/api/tours/ongoing");
+    console.log("Fetched ongoing tours:", response.data); // DEBUG LOG
 
-      const completedToursFound = response.data.filter((tour: any) => tour.status === 'Completed');
-      if (completedToursFound.length > 0) {
-        setCompletedTourToRate(completedToursFound[0]);
-        setShowCompletedModal(true);
-      }
-
-      setOngoingTours(response.data);
-    } catch (error) {
-      console.error('Error fetching ongoing tours:', error);
+    const completedToursFound = response.data.filter((tour: any) => tour.status === 'Completed');
+    if (completedToursFound.length > 0) {
+      console.log("Completed tours found (in ongoing):", completedToursFound); // DEBUG LOG
+      setCompletedTourToRate(completedToursFound[0]);
+      setShowCompletedModal(true);
     }
-  };
+
+    setOngoingTours(response.data);
+  } catch (error) {
+    console.error("Error fetching ongoing tours:", error);
+  }
+};
+
+
 
   const fetchCompletedTours = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/tours/completed`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCompletedTours(response.data);
-    } catch (error) {
-      console.error('Error fetching completed tours:', error);
-    }
-  };
+  try {
+    const response = await apiClient.get("/api/tours/completed");
+    console.log("Fetched completed tours:", response.data); // DEBUG LOG
+    setCompletedTours(response.data);
+  } catch (error) {
+    console.error("Error fetching completed tours:", error);
+  }
+};
+
+
 
   const sendRequestToGuide = async (guideId: string) => {
-    const token = await AsyncStorage.getItem('userToken');
-    try {
-      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/tours/request`, { guideId }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      Alert.alert('Success', 'Tour request sent!');
-    } catch (error) {
-      Alert.alert('Error', 'Could not send request.');
-    }
-  };
+  try {
+    await apiClient.post("/api/tours/request", { guideId });
+    Alert.alert("Success", "Tour request sent!");
+  } catch (error) {
+    Alert.alert("Error", "Could not send request.");
+  }
+};
+
 
   const fetchGuides = async () => {
-    const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/guides/list`);
-    setGuides(response.data);
-  };
+  const response = await apiClient.get("/api/guides/list");
+  setGuides(response.data);
+};
+
 
   const fetchRequestsForGuide = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/tours/requests`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setTourRequests(response.data);
-  };
+  const response = await apiClient.get("/api/tours/requests");
+  setTourRequests(response.data);
+};
+
 
   const handleAccept = async (requestId: string) => {
-    const token = await AsyncStorage.getItem('userToken');
-    await axios.put(`${process.env.EXPO_PUBLIC_API_URL}api/tours/accept`, { tourId: requestId }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    Alert.alert('Accepted', 'Tour accepted and started.');
-    fetchRequestsForGuide();
-    fetchOngoingToursAndCheck();
-  };
+  await apiClient.put("/api/tours/accept", { tourId: requestId });
+  Alert.alert("Accepted", "Tour accepted and started.");
+  fetchRequestsForGuide();
+  fetchOngoingToursAndCheck();
+};
+
 
   const handleReject = async (requestId: string) => {
-    const token = await AsyncStorage.getItem('userToken');
-    await axios.delete(`${process.env.EXPO_PUBLIC_API_URL}api/tours/reject`, {
-      data: { tourId: requestId },
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    Alert.alert('Rejected', 'Request rejected.');
-    fetchRequestsForGuide();
-  };
+  await apiClient.delete("/api/tours/reject", {
+    data: { tourId: requestId },
+  });
+  Alert.alert("Rejected", "Request rejected.");
+  fetchRequestsForGuide();
+};
+
 
   const handleEndTour = async (tourId: string) => {
-    const token = await AsyncStorage.getItem('userToken');
-    try {
-      await axios.put(`${process.env.EXPO_PUBLIC_API_URL}api/tours/complete`, { tourId }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      Alert.alert('Tour ended successfully!');
-      fetchOngoingToursAndCheck();
-      fetchCompletedTours();
-    } catch (error) {
-      console.error('Error ending tour:', error);
-    }
-  };
+  try {
+    await apiClient.put("/api/tours/complete", { tourId });
+    Alert.alert("Tour ended successfully!");
+    fetchOngoingToursAndCheck();
+    fetchCompletedTours();
+  } catch (error) {
+    console.error("Error ending tour:", error);
+  }
+};
 
   const renderTourCard = (item: any, type: 'ongoing' | 'completed') => (
     <TouchableOpacity
@@ -149,106 +139,139 @@ export default function ToursScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      <TopNavbar />
-      {role === 'Visitor' && (
-        <>
-          <Text style={styles.title}>Find a Guide</Text>
-          <TouchableOpacity style={styles.button} onPress={fetchGuides}>
-            <Text style={styles.buttonText}>List Guides</Text>
-          </TouchableOpacity>
+  <View style={styles.container}>
+    <TopNavbar />
+
+    {role === "Visitor" && (
+      <>
+        <Text style={styles.title}>Find a Guide</Text>
+
+        <TouchableOpacity style={styles.button} onPress={fetchGuides}>
+          <Text style={styles.buttonText}>List Guides</Text>
+        </TouchableOpacity>
+
+        <FlatList
+          data={guides}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>{item.name}</Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => sendRequestToGuide(item._id)}
+              >
+                <Text style={styles.buttonText}>Send Request</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+
+        <Text style={styles.sectionTitle}>Ongoing Tours</Text>
+        {ongoingTours.length === 0 ? (
+          <Text style={styles.cardText}>No ongoing tours to show.</Text>
+        ) : (
           <FlatList
-            data={guides}
+            data={ongoingTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <TouchableOpacity style={styles.button} onPress={() => sendRequestToGuide(item._id)}>
-                  <Text style={styles.buttonText}>Send Request</Text>
+            renderItem={({ item }) => renderTourCard(item, "ongoing")}
+            contentContainerStyle={{ paddingBottom: 100 }} // 👈 Nav bar yüksekliği kadar boşluk
+          />
+        )}
+
+        <Text style={styles.sectionTitle}>Completed Tours</Text>
+        {completedTours.length === 0 ? (
+          <Text style={styles.cardText}>No completed tours yet.</Text>
+        ) : (
+          <FlatList
+            data={completedTours}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => renderTourCard(item, "completed")}
+            contentContainerStyle={{ paddingBottom: 100 }} // 👈 Nav bar yüksekliği kadar boşluk
+          />
+        )}
+      </>
+    )}
+
+    {role === "Guide" && (
+      <>
+        <Text style={styles.title}>Incoming Requests</Text>
+
+        <TouchableOpacity style={styles.button} onPress={fetchRequestsForGuide}>
+          <Text style={styles.buttonText}>Load Requests</Text>
+        </TouchableOpacity>
+
+        <FlatList
+          data={tourRequests}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>Visitor: {item.visitor.name}</Text>
+              <View style={styles.row}>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "green" }]}
+                  onPress={() => handleAccept(item._id)}
+                >
+                  <Text style={styles.buttonText}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: "red" }]}
+                  onPress={() => handleReject(item._id)}
+                >
+                  <Text style={styles.buttonText}>Reject</Text>
                 </TouchableOpacity>
               </View>
-            )}
-          />
+            </View>
+          )}
+        />
 
-          <Text style={styles.sectionTitle}>Ongoing Tours</Text>
+        <Text style={styles.sectionTitle}>Ongoing Tours</Text>
+        {ongoingTours.length === 0 ? (
+          <Text style={styles.cardText}>No ongoing tours to show.</Text>
+        ) : (
           <FlatList
             data={ongoingTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => renderTourCard(item, 'ongoing')}
+            renderItem={({ item }) => renderTourCard(item, "ongoing")}
+            contentContainerStyle={{ paddingBottom: 100 }} // 👈 Nav bar yüksekliği kadar boşluk
           />
+        )}
 
-          <Text style={styles.sectionTitle}>Completed Tours</Text>
+        <Text style={styles.sectionTitle}>Completed Tours</Text>
+        {completedTours.length === 0 ? (
+          <Text style={styles.cardText}>No completed tours yet.</Text>
+        ) : (
           <FlatList
             data={completedTours}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => renderTourCard(item, 'completed')}
+            renderItem={({ item }) => renderTourCard(item, "completed")}
+            contentContainerStyle={{ paddingBottom: 100 }} // 👈 Nav bar yüksekliği kadar boşluk
           />
-        </>
-      )}
+        )}
+      </>
+    )}
 
-      {role === 'Guide' && (
-        <>
-          <Text style={styles.title}>Incoming Requests</Text>
-          <TouchableOpacity style={styles.button} onPress={fetchRequestsForGuide}>
-            <Text style={styles.buttonText}>Load Requests</Text>
+    <Modal visible={showCompletedModal} transparent animationType="slide">
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Tour has been completed!</Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.primary }]}
+            onPress={() => {
+              setShowCompletedModal(false);
+              router.push(`/tours/${completedTourToRate._id}`);
+            }}
+          >
+            <Text style={styles.buttonText}>
+              {role === "Guide" ? "Rate Visitor" : "Rate Guide"}
+            </Text>
           </TouchableOpacity>
-
-          <FlatList
-            data={tourRequests}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Visitor: {item.visitor.name}</Text>
-                <View style={styles.row}>
-                  <TouchableOpacity style={[styles.button, { backgroundColor: 'green' }]} onPress={() => handleAccept(item._id)}>
-                    <Text style={styles.buttonText}>Accept</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.button, { backgroundColor: 'red' }]} onPress={() => handleReject(item._id)}>
-                    <Text style={styles.buttonText}>Reject</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          />
-
-          <Text style={styles.sectionTitle}>Ongoing Tours</Text>
-          <FlatList
-            data={ongoingTours}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => renderTourCard(item, 'ongoing')}
-          />
-
-          <Text style={styles.sectionTitle}>Completed Tours</Text>
-          <FlatList
-            data={completedTours}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => renderTourCard(item, 'completed')}
-          />
-        </>
-      )}
-
-      <Modal visible={showCompletedModal} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Tour has been completed!</Text>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
-              onPress={() => {
-                setShowCompletedModal(false);
-                router.push(`/tours/${completedTourToRate._id}`);
-              }}
-            >
-              <Text style={styles.buttonText}>
-                {role === 'Guide' ? 'Rate Visitor' : 'Rate Guide'}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      </Modal>
+      </View>
+    </Modal>
 
-      <BottomNavigationBar activeTab="tours" />
-    </View>
-  );
+    <BottomNavigationBar activeTab="tours" />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ImageBackground, ScrollView, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
-import axios from "axios";
 import { authStyles } from "../styles/authStyles";
 import { colors } from "../styles/theme";
 import logo from "../assets/logo.png";
+import { apiClient } from "@lib/axiosInstance";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -18,36 +18,36 @@ export default function RegisterScreen() {
   const [availability, setAvailability] = useState(false);
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !role) {
-      Alert.alert("Alert", "Please fill whole areas.");
-      return;
-    }
+  if (!name || !email || !password || !role) {
+    Alert.alert("Alert", "Please fill all required fields.");
+    return;
+  }
 
-    const userData: any = {
-      name,
-      email,
-      password,
-      role,
-    };
-
-    if (role === "Guide") {
-      userData.isVerified = false;
-      userData.guideDetails = {
-        bio,
-        languages: languages.split(",").map((lang) => lang.trim()),
-        availability,
-      };
-    }
-
-    try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/auth/register`, userData);
-      Alert.alert("Success", "Successfully Registered!");
-      router.push("/login");
-    } catch (error) {
-      console.error("Register error hatası:", error);
-      Alert.alert("Error", "Registration failed.");
-    }
+  const userData: any = {
+    name,
+    email,
+    password,
+    role,
   };
+
+  if (role === "Guide") {
+    userData.isVerified = false;
+    userData.guideDetails = {
+      bio,
+      languages: languages.split(",").map((lang) => lang.trim()),
+      availability,
+    };
+  }
+
+  try {
+    const response = await apiClient.post("/api/auth/register", userData);
+    Alert.alert("Success", "Successfully Registered!");
+    router.push("/login");
+  } catch (error) {
+    console.error("Register error:", error);
+    // Hata interceptor tarafından da gösterilecek
+  }
+};
 
   return (
     <ImageBackground 

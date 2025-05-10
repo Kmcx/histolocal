@@ -1,12 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { colors } from '../../styles/theme';
+import { apiClient } from "@lib/axiosInstance";
 
 export default function ProfileScreen() {
   const { userId } = useLocalSearchParams();
@@ -19,29 +19,27 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = await AsyncStorage.getItem('userToken') || await AsyncStorage.getItem('adminToken');
-      const currentUserId = await AsyncStorage.getItem('userId');
-      setLoggedInUserId(currentUserId);
+    const token = await AsyncStorage.getItem("userToken") || await AsyncStorage.getItem("adminToken");
+    const currentUserId = await AsyncStorage.getItem("userId");
+    setLoggedInUserId(currentUserId);
 
-      const adminToken = await AsyncStorage.getItem("adminToken");
-      if (adminToken) {
-        setIsAdmin(true);
-      }
+    const adminToken = await AsyncStorage.getItem("adminToken");
+    if (adminToken) {
+      setIsAdmin(true);
+    }
 
-      try {
-        const profileResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfileData(profileResponse.data);
+    try {
+      const profileResponse = await apiClient.get(`/api/profile/${userId}`);
+      setProfileData(profileResponse.data);
 
-        const feedbackResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/feedback/user/${userId}`);
-        setFeedbacks(feedbackResponse.data);
-      } catch (error) {
-        console.error('Error fetching profile or feedback:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const feedbackResponse = await apiClient.get(`/api/feedback/user/${userId}`);
+      setFeedbacks(feedbackResponse.data);
+    } catch (error) {
+      console.error("Error fetching profile or feedback:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchData();
   }, [userId]);
@@ -52,46 +50,43 @@ export default function ProfileScreen() {
     router.push('/login');
   };
 
-  const handleVerifyProfile = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      Alert.alert("Permission required", "We need access to your gallery.");
-      return;
-    }
+const handleVerifyProfile = async () => {
+  const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!permissionResult.granted) {
+    Alert.alert("Permission required", "We need access to your gallery.");
+    return;
+  }
 
-    const pickerResult = await ImagePicker.launchImageLibraryAsync({ base64: false });
-    if (pickerResult.canceled) return;
+  const pickerResult = await ImagePicker.launchImageLibraryAsync({ base64: false });
+  if (pickerResult.canceled) return;
 
-    const image = pickerResult.assets[0];
-    const data = new FormData();
-    data.append("file", {
-      uri: image.uri,
-      type: "image/jpeg",
-      name: "id.jpg",
-    } as any);
-    data.append("upload_preset", "histolocal");
+  const image = pickerResult.assets[0];
+  const data = new FormData();
+  data.append("file", {
+    uri: image.uri,
+    type: "image/jpeg",
+    name: "id.jpg",
+  } as any);
+  data.append("upload_preset", "histolocal");
 
-    try {
-      const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/<your_cloud_name>/image/upload", {
-        method: "POST",
-        body: data,
-      });
-      const cloudData = await cloudinaryRes.json();
-      const imageUrl = cloudData.secure_url;
+  try {
+    const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/<your_cloud_name>/image/upload", {
+      method: "POST",
+      body: data,
+    });
 
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/profile/upload-id`, {
-        imageUrl,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const cloudData = await cloudinaryRes.json();
+    const imageUrl = cloudData.secure_url;
 
-      Alert.alert("Success", "Your ID has been submitted.");
-    } catch (err) {
-      console.error("Cloudinary Upload Error:", err);
-      Alert.alert("Upload Failed", "Could not upload ID.");
-    }
-  };
+    await apiClient.post("/api/profile/upload-id", { imageUrl });
+
+    Alert.alert("Success", "Your ID has been submitted.");
+  } catch (err) {
+    console.error("Cloudinary Upload Error:", err);
+    Alert.alert("Upload Failed", "Could not upload ID.");
+  }
+};
+
 
   if (loading || !profileData) {
     return (
