@@ -21,6 +21,7 @@ import MapInline from './MapScreen';
 import { colors } from '../../styles/theme';
 import logo from '../../assets/logo.png';
 import TopNavbar from '../../components/TopNavbar';
+import { aiClient } from "@lib/axiosInstance";
 
 const NAVBAR_HEIGHT = 60;
 const TOPNAV_HEIGHT = Platform.OS === 'ios' ? 60 : 40;
@@ -65,74 +66,74 @@ export default function AIChatScreen() {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+  if (!input.trim()) return;
 
-    const timestamp = new Date().toLocaleTimeString();
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      text: input,
-      timestamp,
-    };
-
-    setMessages((prev: Message[]) => [...prev, userMessage]);
-    setInput('');
-    setLoading(true);
-
-    const typingMessage: Message = {
-      id: 'typing',
-      role: 'ai',
-      text: 'Typing...',
-      timestamp: '',
-    };
-    setMessages((prev: Message[]) => [...prev, typingMessage]);
-
-    try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_OLLAMA_SERVER_API_URL}generate-itinerary/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: userMessage.text, context }),
-      });
-
-      const data = await res.json();
-      const aiMessage: Message = {
-        id: Date.now().toString() + '_ai',
-        role: 'ai',
-        text: data.response || 'No response received.',
-        timestamp: new Date().toLocaleTimeString(),
-      };
-
-      setContext(data.context || {});
-
-      setMessages((prev: Message[]) => {
-        const cleared = prev.filter(m => m.id !== 'typing');
-        const updated = [...cleared, aiMessage];
-        if (data.locations && Array.isArray(data.locations)) {
-          const mapMessage: Message = {
-            id: Date.now().toString() + '_map',
-            role: 'map',
-            text: '',
-            timestamp: '',
-            extraData: data.locations
-          };
-          return [...updated, mapMessage];
-        } else {
-          return updated;
-        }
-      });
-
-    } catch (err) {
-      const errorMessage: Message = {
-        id: 'error',
-        role: 'ai',
-        text: 'Error: Could not connect to AI server.',
-        timestamp: new Date().toLocaleTimeString(),
-      };
-      setMessages((prev: Message[]) => [...prev.filter(m => m.id !== 'typing'), errorMessage]);
-    } finally {
-      setLoading(false);
-    }
+  const timestamp = new Date().toLocaleTimeString();
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    role: "user",
+    text: input,
+    timestamp,
   };
+
+  setMessages((prev: Message[]) => [...prev, userMessage]);
+  setInput("");
+  setLoading(true);
+
+  const typingMessage: Message = {
+    id: "typing",
+    role: "ai",
+    text: "Typing...",
+    timestamp: "",
+  };
+  setMessages((prev: Message[]) => [...prev, typingMessage]);
+
+  try {
+    const res = await aiClient.post("/generate-itinerary/", {
+      prompt: userMessage.text,
+      context,
+    });
+
+    const data = res.data;
+
+    const aiMessage: Message = {
+      id: Date.now().toString() + "_ai",
+      role: "ai",
+      text: data.response || "No response received.",
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setContext(data.context || {});
+
+    setMessages((prev: Message[]) => {
+      const cleared = prev.filter((m) => m.id !== "typing");
+      const updated = [...cleared, aiMessage];
+
+      if (data.locations && Array.isArray(data.locations)) {
+        const mapMessage: Message = {
+          id: Date.now().toString() + "_map",
+          role: "map",
+          text: "",
+          timestamp: "",
+          extraData: data.locations,
+        };
+        return [...updated, mapMessage];
+      } else {
+        return updated;
+      }
+    });
+  } catch (err) {
+    const errorMessage: Message = {
+      id: "error",
+      role: "ai",
+      text: "Error: Could not connect to AI server.",
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setMessages((prev: Message[]) => [...prev.filter((m) => m.id !== "typing"), errorMessage]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderMarkdown = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|\[.*?\]\(.*?\))/g);

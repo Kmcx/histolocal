@@ -13,3 +13,8 @@
     npx expo start
    ```
 
+
+```
+For web : npm run start:web
+For mobile : npm run start:mobile
+```

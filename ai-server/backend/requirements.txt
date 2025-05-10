@@ -6,4 +6,4 @@ python-dotenv
 slowapi
 aiofiles
 requests
-json
+chromadb

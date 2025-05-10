@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { colors } from '../../styles/theme';
+import { apiClient } from '@lib/axiosInstance';
 
 export default function TourDetailScreen() {
   const { tourId } = useLocalSearchParams();
@@ -15,62 +14,54 @@ export default function TourDetailScreen() {
   const [rating, setRating] = useState('');
   const [comment, setComment] = useState('');
   const [tourFeedbacks, setTourFeedbacks] = useState<any[]>([]);
+  
 
   useEffect(() => {
     const fetchTourDetails = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      try {
-        const res = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/tours/${tourId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setTour(res.data);
+    try {
+      const res = await apiClient.get(`/api/tours/${tourId}`);
+      setTour(res.data);
 
-        const feedbackRes = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/feedback/bytour/${tourId}`);
-        setTourFeedbacks(feedbackRes.data);
-      } catch (error) {
-        console.error('Error loading tour details or feedbacks:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const feedbackRes = await apiClient.get(`/api/feedback/bytour/${tourId}`);
+      setTourFeedbacks(feedbackRes.data);
+    } catch (error) {
+      console.error("Error loading tour details or feedbacks:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchTourDetails();
   }, [tourId]);
 
   const handleEndTour = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    try {
-      await axios.put(`${process.env.EXPO_PUBLIC_API_URL}api/tours/complete`, { tourId }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      Alert.alert('Tour ended successfully!');
-      const updatedTour = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/tours/${tourId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTour(updatedTour.data);
-    } catch (error) {
-      console.error('Error ending tour:', error);
-    }
-  };
+  try {
+    await apiClient.put("/api/tours/complete", { tourId });
+    Alert.alert("Tour ended successfully!");
+
+    const updatedTour = await apiClient.get(`/api/tours/${tourId}`);
+    setTour(updatedTour.data);
+  } catch (error) {
+    console.error("Error ending tour:", error);
+  }
+};
+
 
   const handleSendFeedback = async () => {
-    const token = await AsyncStorage.getItem('userToken');
-    const toUserId = tour.visitor._id;
-    try {
-      await axios.post(`${process.env.EXPO_PUBLIC_API_URL}api/feedback`, {
-        toUser: toUserId,
-        rating: Number(rating),
-        comment,
-        tourId: tour._id,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      Alert.alert('Feedback submitted!');
-      setFeedbackModalVisible(false);
-    } catch (error) {
-      console.error('Error sending feedback:', error);
-    }
-  };
+  try {
+    await apiClient.post("/api/feedback", {
+      toUser: tour.visitor._id,
+      rating: Number(rating),
+      comment,
+      tourId: tour._id,
+    });
+    Alert.alert("Feedback submitted!");
+    setFeedbackModalVisible(false);
+  } catch (error) {
+    console.error("Error sending feedback:", error);
+  }
+};
+
 
   if (loading || !tour) {
     return (

@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BottomNavigationBar } from '../../../components/BottomNavigationBar';
 import { colors } from '../../../styles/theme';
+import { apiClient } from "@lib/axiosInstance";
 
 export default function ProfileEditScreen() {
   const { userId } = useLocalSearchParams();
@@ -18,48 +17,42 @@ export default function ProfileEditScreen() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}api/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfileData(response.data);
-        setName(response.data.name);
-        setEmail(response.data.email);
-        setBio(response.data.bio || '');
-        setLanguages(response.data.languages?.join(', ') || '');
-        setAvailability(response.data.guideDetails?.availability ?? null);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      }
-    };
+    try {
+      const response = await apiClient.get(`/api/profile/${userId}`);
+      setProfileData(response.data);
+      setName(response.data.name);
+      setEmail(response.data.email);
+      setBio(response.data.bio || '');
+      setLanguages(response.data.languages?.join(', ') || '');
+      setAvailability(response.data.guideDetails?.availability ?? null);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
     fetchProfile();
   }, [userId]);
 
   const handleUpdate = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const updatedData: any = {
-        name,
-        email,
-        bio,
-        languages: languages.split(',').map((lang) => lang.trim()),
-        guideDetails: {
-          availability,
-        },
-      };
+  try {
+    const updatedData: any = {
+      name,
+      email,
+      bio,
+      languages: languages.split(',').map((lang) => lang.trim()),
+      guideDetails: {
+        availability,
+      },
+    };
 
-      await axios.put(`${process.env.EXPO_PUBLIC_API_URL}api/profile/edit/${userId}`, updatedData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      Alert.alert('Success', 'Profile updated successfully!');
-      router.back();
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile.');
-    }
-  };
+    await apiClient.put(`/api/profile/edit/${userId}`, updatedData);
+    Alert.alert('Success', 'Profile updated successfully!');
+    router.back();
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    Alert.alert('Error', 'Failed to update profile.');
+  }
+};
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>

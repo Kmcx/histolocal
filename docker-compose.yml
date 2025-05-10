@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "${EXPO_PUBLIC_API_PORT}:${EXPO_PUBLIC_API_PORT}"
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - histolocal-net
+
+      
+
+  ai-server:
+    build: ./ai-server
+    ports:
+      - "${EXPO_PUBLIC_AI_PORT}:${EXPO_PUBLIC_AI_PORT}"
+    volumes:
+      - ./ai-server:/app
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - histolocal-net
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    environment:
+      - EXPO_PUBLIC_HOST_IP=backend  # override sadece Docker için
+    restart: unless-stopped
+    networks:
+      - histolocal-net
+
+networks:
+  histolocal-net:
+    driver: bridge
