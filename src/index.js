@@ -9,6 +9,8 @@ const swaggerDocs = require('./config/swagger');
 const mongoose = require('mongoose');
 const db = require('./config/db');
 const logger = require('./utils/logger');
+const { cacheMiddleware } = require('./middleware/cache');
+const apiVersion = require('./middleware/apiVersion');
 
 const authRoutes = require('./routes/authRoutes');
 const profileRoutes = require('./routes/profileRoutes');
@@ -18,7 +20,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const cors = require('cors');
-const errorHandler = require('./middleware/errorHandler');
+const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -28,7 +30,8 @@ app.use(helmet());
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
 
@@ -43,7 +46,7 @@ app.use(cors({
 app.use(compression());
 
 // Logging Middleware
-app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
+app.use(morgan('combined', { stream: logger.stream }));
 
 // MongoDB connection
 (async () => {
@@ -80,17 +83,18 @@ app.get('/', (req, res) => {
     res.json({
         status: 'success',
         message: 'Histolocal Backend API is running!',
-        version: '1.0.0'
+        version: '1.0.0',
+        environment: process.env.NODE_ENV
     });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/guides', guideRoutes);
-app.use('/api/tours', tourRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/feedback', feedbackRoutes);
+// API Routes with versioning and caching
+app.use('/api/v1/auth', apiVersion('1.0'), authRoutes);
+app.use('/api/v1/profile', apiVersion('1.0'), cacheMiddleware(300), profileRoutes);
+app.use('/api/v1/guides', apiVersion('1.0'), cacheMiddleware(300), guideRoutes);
+app.use('/api/v1/tours', apiVersion('1.0'), cacheMiddleware(300), tourRoutes);
+app.use('/api/v1/admin', apiVersion('1.0'), adminRoutes);
+app.use('/api/v1/feedback', apiVersion('1.0'), feedbackRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);
@@ -99,12 +103,13 @@ app.use(errorHandler);
 app.use((req, res) => {
     res.status(404).json({
         status: 'error',
-        message: 'Route not found'
+        message: 'Route not found',
+        path: req.originalUrl
     });
 });
 
 // Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+    logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });
