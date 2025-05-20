@@ -13,29 +13,30 @@ export default function AdminLoginScreen() {
   const [password, setPassword] = useState("");
 
   const handleAdminLogin = async () => {
-  if (!email || !password) {
-    Alert.alert("Error", "Please enter email and password.");
-    return;
-  }
-
-  try {
-    const response = await apiClient.post("/api/admin/login", {
-      email,
-      password,
-    });
-
-    if (response.data.token && response.data.isAdmin) {
-      await AsyncStorage.setItem("adminToken", response.data.token);
-      Alert.alert("Success", "Logged in as Admin");
-      router.push("/admin/home");
-    } else {
-      Alert.alert("Error", "Not authorized as admin.");
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter email and password.");
+      return;
     }
-  } catch (error) {
-    console.error("Admin Login Error:", error);
-    Alert.alert("Login Failed", "Invalid credentials or network issue.");
-  }
-};
+
+    try {
+      const response = await apiClient.post("/api/admin/login", {
+        email,
+        password,
+      });
+
+      if (response.data.token && response.data.isAdmin) {
+        await AsyncStorage.setItem("adminToken", response.data.token);
+        await AsyncStorage.setItem("userId", response.data.adminUserId); // ✅ userId admin için eklendi
+        Alert.alert("Success", "Logged in as Admin");
+        router.push("/admin/home");
+      } else {
+        Alert.alert("Error", "Not authorized as admin.");
+      }
+    } catch (error) {
+      console.error("Admin Login Error:", error);
+      Alert.alert("Login Failed", "Invalid credentials or network issue.");
+    }
+  };
 
   return (
     <ImageBackground
@@ -44,7 +45,6 @@ export default function AdminLoginScreen() {
       resizeMode="cover"
     >
       <View style={authStyles.container}>
-        {/* Logo */}
         <View style={authStyles.logoWrapper}>
           <Image source={logo} style={authStyles.logo} resizeMode="contain" />
         </View>
@@ -56,7 +56,7 @@ export default function AdminLoginScreen() {
           placeholder="Admin Email"
           value={email}
           onChangeText={setEmail}
-          placeholderTextColor={colors.secondaryText}
+          placeholderTextColor="#419097"
         />
         <TextInput
           style={authStyles.input}
@@ -64,7 +64,7 @@ export default function AdminLoginScreen() {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          placeholderTextColor={colors.secondaryText}
+          placeholderTextColor="#419097"
         />
 
         <TouchableOpacity style={authStyles.button} onPress={handleAdminLogin}>

@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyGuide, loginAdmin, getAllUsers, banUser } = require('../controllers/adminController');
+const { verifyUser, loginAdmin, getAllUsers, banUser, getPendingVerifications, rejectUser, unbanUser, unverifyUser } = require('../controllers/adminController');
 const { protect } = require('../middleware/authMiddleware'); 
 const router = express.Router();
 
@@ -57,13 +57,23 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-// guide verify route
-router.post('/verify-guide', protect, verifyGuide);
 
+
+//admin login
 router.post('/login', loginAdmin);
 
-router.get('/users', protect, getAllUsers); // 🆕 Get all users
 
+// users
+router.get('/users', protect, getAllUsers); // 🆕 Get all users
 router.delete('/ban/:userId', protect, banUser);
+router.post('/unban/:userId', protect, unbanUser);
+router.post('/unverify/:userId', protect, unverifyUser);
+
+//verification
+router.get("/verification-requests", getPendingVerifications);
+router.post("/verify-user", verifyUser);
+router.post("/reject-user", protect, rejectUser);
+
+
 
 module.exports = router;

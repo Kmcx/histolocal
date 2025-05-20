@@ -54,8 +54,8 @@ export default function LoginScreen() {
 
         <Text style={authStyles.title}>Welcome Back</Text>
 
-        <TextInput style={authStyles.input} placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput style={authStyles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+        <TextInput style={authStyles.input} placeholder="Email" placeholderTextColor="#419097" value={email} onChangeText={setEmail} />
+        <TextInput style={authStyles.input} placeholder="Password" placeholderTextColor="#419097" secureTextEntry value={password} onChangeText={setPassword} />
 
         <TouchableOpacity style={authStyles.button} onPress={handleLogin}>
           <Text style={authStyles.buttonText}>Login</Text>

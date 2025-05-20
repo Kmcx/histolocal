@@ -62,9 +62,9 @@ export default function RegisterScreen() {
 
         <Text style={authStyles.title}>Register</Text>
 
-        <TextInput style={authStyles.input} placeholder="Name" value={name} onChangeText={setName} />
-        <TextInput style={authStyles.input} placeholder="Email" value={email} onChangeText={setEmail} />
-        <TextInput style={authStyles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+        <TextInput style={authStyles.input} placeholder="Name" placeholderTextColor="#419097" value={name} onChangeText={setName} />
+        <TextInput style={authStyles.input} placeholder="Email" placeholderTextColor="#419097" value={email} onChangeText={setEmail} />
+        <TextInput style={authStyles.input} placeholder="Password" placeholderTextColor="#419097" secureTextEntry value={password} onChangeText={setPassword} />
 
         <View style={styles.roleSelectionContainer}>
           <TouchableOpacity onPress={() => setRole("Visitor")} style={[styles.roleButton, role === "Visitor" && styles.selectedRoleButton]}>
@@ -77,15 +77,15 @@ export default function RegisterScreen() {
 
         {role === "Guide" && (
           <View>
-            <TextInput style={authStyles.input} placeholder="Bio" value={bio} onChangeText={setBio} />
-            <TextInput style={authStyles.input} placeholder="Languages (comma-separated)" value={languages} onChangeText={setLanguages} />
+            <TextInput style={authStyles.input} placeholder="Bio" placeholderTextColor="#419097" value={bio} onChangeText={setBio} />
+            <TextInput style={authStyles.input} placeholder="Languages (comma-separated)" placeholderTextColor="#419097" value={languages} onChangeText={setLanguages} />
             <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
               <Text style={{ color: colors.text, marginRight: 10 }}>Availability:</Text>
               <TouchableOpacity
                 onPress={() => setAvailability(!availability)}
                 style={[styles.availabilityToggle, availability && styles.availabilityActive]}
               >
-                <Text style={{ color: availability ? 'white' : colors.text }}>{availability ? 'Available' : 'Not Available'}</Text>
+                <Text style={{ color: availability ? 'green' : colors.text }}>{availability ? 'Available' : 'Not Available'}</Text>
               </TouchableOpacity>
             </View>
           </View>

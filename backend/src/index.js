@@ -11,7 +11,8 @@ const profileRoutes = require('./routes/profileRoutes');
 const guideRoutes = require('./routes/guideRoutes');
 const tourRoutes = require('./routes/tourRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const feedbackRoutes = require('./routes/feedbackRoutes'); 
+const feedbackRoutes = require('./routes/feedbackRoutes');
+const cloudinaryRoutes = require("./routes/cloudinaryRoutes"); 
 
 const cors = require('cors');
 
@@ -70,6 +71,9 @@ app.use('/api/admin', adminRoutes);
 
 //Feedback Route
 app.use('/api/feedback', feedbackRoutes);
+
+//Cloudinary Route
+app.use("/api/cloudinary", cloudinaryRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
