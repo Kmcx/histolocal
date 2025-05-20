@@ -2,10 +2,8 @@ const express = require('express');
 const { getProfile, updateProfile, uploadIDImage } = require('../controllers/profileController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+const upload = require("../config/multer");
 
-
-
-router.post("/upload-id", protect, uploadIDImage);
 
 
 // Profil Görüntüleme
@@ -74,6 +72,8 @@ router.get('/:userId', protect, getProfile);
  *         description: Unauthorized
  */
 router.put('/edit/:userId', updateProfile);
+
+router.post("/upload-id", protect, upload.single("file"), uploadIDImage);
 
 
 module.exports = router;

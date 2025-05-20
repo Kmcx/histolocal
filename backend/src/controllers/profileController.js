@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const cloudinary = require("../config/cloudinary");
 
 // Get user profile by userId
 const getProfile = async (req, res) => {
@@ -47,19 +48,56 @@ const updateProfile = async (req, res) => {
 };
 
 
+
 const uploadIDImage = async (req, res) => {
-    const userId = req.user._id;
-    const { imageUrl } = req.body;
-  
-    try {
-      const user = await User.findById(userId);
-      user.idImageUrl = imageUrl;
-      await user.save();
-      res.status(200).json({ message: "ID uploaded successfully." });
-    } catch (error) {
-      res.status(500).json({ message: "Upload failed", error: error.message });
-    }
-  };
+  console.log("🔍 [uploadIDImage] İstek alındı");
+
+  // Dosya kontrolü
+  if (!req.file) {
+    console.error("❌ [uploadIDImage] req.file yok – dosya alınamadı.");
+    return res.status(400).json({ message: "No file provided" });
+  }
+
+  console.log("✅ [uploadIDImage] req.file bulundu:", {
+    originalname: req.file.originalname,
+    size: req.file.size,
+    mimetype: req.file.mimetype,
+  });
+
+  try {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "id-verifications" },
+      async (error, result) => {
+        if (error) {
+          console.error("❌ [uploadIDImage] Cloudinary upload hatası:", error);
+          return res.status(500).json({ message: "Cloudinary upload failed", error });
+        }
+
+        const user = await User.findById(req.user._id);
+        if (!user) {
+          console.error("❌ Kullanıcı bulunamadı:", req.user._id);
+          return res.status(404).json({ message: "User not found" });
+        }
+
+        user.idImageUrl = result.secure_url;
+        user.verificationStatus = "pending"; // opsiyonel
+        await user.save();
+
+        console.log("✅ [uploadIDImage] Upload ve kayıt başarılı:", result.secure_url);
+        res.status(200).json({ message: "ID uploaded successfully", url: result.secure_url });
+      }
+    );
+
+    stream.end(req.file.buffer);
+  } catch (error) {
+    console.error("❌ [uploadIDImage] Genel hata:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+module.exports = {
+  uploadIDImage,
+};
   
 
 module.exports = { getProfile, updateProfile, uploadIDImage };
