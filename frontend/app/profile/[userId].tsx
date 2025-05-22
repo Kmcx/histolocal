@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, FlatList, Alert, Switch, Button } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, Switch, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [profileData, setProfileData] = useState<any>(null);
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [loggedInUserId, setLoggedInUserId] = useState<string | null>(null);
@@ -28,9 +29,7 @@ export default function ProfileScreen() {
       setLoggedInUserId(currentUserId);
 
       const adminToken = await AsyncStorage.getItem("adminToken");
-      if (adminToken) {
-        setIsAdmin(true);
-      }
+      if (adminToken) setIsAdmin(true);
 
       try {
         const profileResponse = await apiClient.get(`/api/profile/${userId}`);
@@ -38,6 +37,11 @@ export default function ProfileScreen() {
 
         const feedbackResponse = await apiClient.get(`/api/feedback/user/${userId}`);
         setFeedbacks(feedbackResponse.data);
+
+        if (feedbackResponse.data.length > 0) {
+          const total = feedbackResponse.data.reduce((sum: number, item: any) => sum + item.rating, 0);
+          setAverageRating(parseFloat((total / feedbackResponse.data.length).toFixed(1)));
+        }
       } catch (error) {
         console.error("Error fetching profile or feedback:", error);
       } finally {
@@ -50,11 +54,10 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('userToken');
-    await AsyncStorage.removeItem('adminToken'); //  clear admin logout
+    await AsyncStorage.removeItem('adminToken');
     await AsyncStorage.removeItem('userId');
     router.push('/login');
   };
-
 
   const handleVerifyProfile = () => {
     setKvkkVisible((prev) => !prev);
@@ -88,10 +91,8 @@ export default function ProfileScreen() {
 
     try {
       setUploading(true);
-      const res = await apiClient.post("/api/profile/upload-id", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await apiClient.post("/api/profile/upload-id", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       Alert.alert("Success", "Your ID image has been uploaded. Your verification is now pending.");
@@ -115,101 +116,112 @@ export default function ProfileScreen() {
   }
 
   return (
-  <View style={{ flex: 1, backgroundColor: colors.background }}>
-    <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 120 }}>
-      {/* ← Back tuşu */}
-      <TouchableOpacity onPress={() => router.back()} style={{ marginBottom: 10 }}>
-        <Text style={{ color: colors.primary, fontWeight: "bold" }}>← Back</Text>
-      </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <TouchableOpacity onPress={() => router.back()} style={{ margin: 10 }}>
+              <Ionicons name="arrow-back-outline" size={28} color={colors.primary} />
+            </TouchableOpacity>
 
-      <View style={{ alignItems: "center" }}>
-        <Ionicons name="person-circle-outline" size={100} color={colors.primary} />
-      </View>
-
-      <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center" }}>{profileData.name}</Text>
-      <Text style={{ fontSize: 16, textAlign: "center" }}>{profileData.role}</Text>
-      <Text style={{ fontSize: 14, textAlign: "center", marginBottom: 10 }}>{profileData.email}</Text>
-
-      {profileData.isVerified === true && <Text style={{ color: "green", textAlign: "center" }}>✅ Verified</Text>}
-      {profileData.isVerified === "pending" && loggedInUserId === userId && (
-        <Text style={{ color: "orange", textAlign: "center" }}>⏳ Verification Pending</Text>
-      )}
-
-      <Text style={{ fontWeight: "bold", marginTop: 20 }}>Bio</Text>
-      <Text>{profileData.bio || 'No bio available.'}</Text>
-
-      <Text style={{ fontWeight: "bold", marginTop: 20 }}>Languages</Text>
-      <Text>{profileData.languages?.join(', ') || 'No languages specified.'}</Text>
-
-      <Text style={{ fontWeight: "bold", marginTop: 20 }}>Feedback</Text>
-      {feedbacks.length > 0 ? (
-        <FlatList
-          data={feedbacks}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <View style={{ marginBottom: 10, padding: 10, backgroundColor: colors.card, borderRadius: 8 }}>
-              <Text>From: {item.fromUser.name}</Text>
-              <Text>Rating: {item.rating} / 5</Text>
-              <Text>Comment: {item.comment}</Text>
+            <View style={{ alignItems: "center", marginBottom: 20 }}>
+              <Ionicons name="person-circle-outline" size={120} color={colors.primary} />
+              <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>{profileData.name}</Text>
+              <Text style={{ fontSize: 16, color: "#666" }}>{profileData.role}</Text>
+              <Text style={{ fontSize: 14, color: "#888" }}>{profileData.email}</Text>
+              {averageRating !== null && (
+                <Text style={{ fontSize: 15, color: "#555", marginBottom: 10 }}>
+                  ⭐ Average Rating: {averageRating} / 5
+                </Text>
+              )}
+              {profileData.isVerified === true && <Text style={{ color: "green" }}>✅ Verified</Text>}
+              {profileData.isVerified === "pending" && loggedInUserId === userId && (
+                <Text style={{ color: "orange" }}>⏳ Verification Pending</Text>
+              )}
             </View>
-          )}
-        />
+
+            <View style={{ paddingHorizontal: 20 }}>
+              <Text style={styles.sectionTitle}>Bio</Text>
+              <Text style={styles.sectionText}>{profileData.bio || 'No bio available.'}</Text>
+
+              <Text style={styles.sectionTitle}>Languages</Text>
+              <Text style={styles.sectionText}>{profileData.languages?.join(', ') || 'No languages specified.'}</Text>
+
+              <Text style={styles.sectionTitle}>Ratings</Text>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={feedbacks}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => (
+                  <View style={styles.feedbackCard}>
+                    <Text style={{ fontWeight: 'bold' }}>From: {item.fromUser.name}</Text>
+                    <Text>Rating: {item.rating} / 5</Text>
+                    <Text style={{ color: '#555' }}>{item.comment}</Text>
+                  </View>
+                )}
+                ListEmptyComponent={<Text style={{ textAlign: 'center', color: '#999' }}>No feedback yet.</Text>}
+              />
+            </View>
+          </>
+        }
+        data={[]} // sadece header kullanıyoruz
+        renderItem={null}
+        ListFooterComponent={
+          <View style={{ paddingHorizontal: 20 }}>
+            {loggedInUserId === userId && (
+              <>
+                <TouchableOpacity style={styles.primaryButton} onPress={() => router.push(`/profile/edit/${userId}`)}>
+                  <Text style={styles.buttonText}>Update Profile</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.primaryButton} onPress={handleVerifyProfile}>
+                  <Text style={styles.buttonText}>📤 Verify Profile</Text>
+                </TouchableOpacity>
+
+                {kvkkVisible && (
+                  <View style={{ backgroundColor: "#fff", padding: 16, borderRadius: 10, marginTop: 15 }}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>KVKK Aydınlatma Metni</Text>
+                    <Text style={{ fontSize: 13, marginBottom: 10 }}>
+                      TR: Kimlik fotoğrafınızı yükleyerek, kişisel verilerinizin 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenmesine onay vermiş olursunuz.
+                    </Text>
+                    <Text style={{ fontSize: 13, marginBottom: 10 }}>
+                      EN: By uploading your ID photo, you consent to the processing of your personal data in accordance with the Personal Data Protection Law (KVKK).
+                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                      <Switch value={consentGiven} onValueChange={setConsentGiven} />
+                      <Text style={{ marginLeft: 10 }}>I agree</Text>
+                    </View>
+                    <Button title={uploading ? "Uploading..." : "Select and Upload Photo"} onPress={launchImagePicker} disabled={!consentGiven || uploading} />
+                  </View>
+                )}
+
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                  <Ionicons name="log-out" size={22} color="#FF3B30" />
+                  <Text style={styles.logoutText}>Log Out</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {isAdmin && profileData.idImageUrl && (
+              <>
+                <Text style={styles.sectionTitle}>Uploaded ID Card</Text>
+                <TouchableOpacity onPress={() => router.push(profileData.idImageUrl)}>
+                  <Text style={{ color: colors.primary }}>View ID Image</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 120 }}
+      />
+      {isAdmin ? (
+        <AdminNavigationBar activeTab="profile" />
       ) : (
-        <Text>No feedback yet.</Text>
+        <BottomNavigationBar activeTab="profile" />
       )}
-
-      {loggedInUserId === userId && (
-        <>
-          <TouchableOpacity style={styles.primaryButton} onPress={() => router.push(`/profile/edit/${userId}`)}>
-            <Text style={styles.buttonText}>Update Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.primaryButton} onPress={handleVerifyProfile}>
-            <Text style={styles.buttonText}>📤 Verify Profile</Text>
-          </TouchableOpacity>
-
-          {kvkkVisible && (
-            <View style={{ backgroundColor: "#fff", padding: 16, borderRadius: 10, marginTop: 15 }}>
-              <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>KVKK Aydınlatma Metni</Text>
-              <Text style={{ fontSize: 13, marginBottom: 10 }}>
-                TR: Kimlik fotoğrafınızı yükleyerek, kişisel verilerinizin 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenmesine onay vermiş olursunuz.
-              </Text>
-              <Text style={{ fontSize: 13, marginBottom: 10 }}>
-                EN: By uploading your ID photo, you consent to the processing of your personal data in accordance with the Personal Data Protection Law (KVKK).
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                <Switch value={consentGiven} onValueChange={setConsentGiven} />
-                <Text style={{ marginLeft: 10 }}>I agree</Text>
-              </View>
-              <Button title={uploading ? "Uploading..." : "Select and Upload Photo"} onPress={launchImagePicker} disabled={!consentGiven || uploading} />
-            </View>
-          )}
-
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out" size={22} color="#FF3B30" />
-            <Text style={styles.logoutText}>Log Out</Text>
-          </TouchableOpacity>
-        </>
-      )}
-
-      {isAdmin && profileData.idImageUrl && (
-        <>
-          <Text style={{ fontWeight: "bold", marginTop: 20 }}>Uploaded ID Card</Text>
-          <TouchableOpacity onPress={() => router.push(profileData.idImageUrl)}>
-            <Text style={{ color: colors.primary }}>View ID Image</Text>
-          </TouchableOpacity>
-        </>
-      )}
-    </ScrollView>
-
-    {isAdmin ? (
-      <AdminNavigationBar activeTab="profile" />
-    ) : (
-      <BottomNavigationBar activeTab="profile" />
-    )}
-  </View>
-);
-
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -218,4 +230,7 @@ const styles = StyleSheet.create({
   buttonText: { color: "white", fontWeight: "bold" },
   logoutButton: { flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 20 },
   logoutText: { marginLeft: 8, color: '#FF3B30', fontSize: 16, fontWeight: 'bold' },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", marginTop: 20 },
+  sectionText: { fontSize: 14, color: "#444", marginTop: 4 },
+  feedbackCard: { width: 250, marginHorizontal: 10, padding: 15, backgroundColor: colors.card, borderRadius: 12 },
 });
