@@ -208,48 +208,88 @@ async def generate_itinerary(req: PromptRequest):
 
         if ctx.get("stage") == "completed":
             locs = ctx.get("locations", [])
-            if not locs:
-                return {
-                    "response": "I couldn't find the locations. Let's start again.\nWhich places would you like to visit in Izmir? (e.g. Konak, Çeşme...)",
-                    "awaiting": "locations",
-                    "context": {"stage": "awaiting_locations", "locations": [], "category": ""}
-                }
-
             raw_category = ctx.get("category", "")
-            if not raw_category:
-                ctx["stage"] = "awaiting_category"
-                return {
-                    "response": "Please specify what type of tour you're interested in (e.g. historical sites, city life, beaches)",
-                    "awaiting": "category",
-                    "context": ctx
-                }
-
             categories = [c.strip().lower() for c in re.split(r",| and ", raw_category) if c.strip()]
             coords = [fallback_locations[l] for l in locs if l in fallback_locations]
             route = get_route(coords) if len(coords) > 1 else None
-            transport = get_public_transport(locs)
             weather_summary = "\n".join(get_weather(l, ctx["travel_date"]) for l in locs if l in fallback_locations)
 
-            itinerary_locations = []
+            # Transport detaylarını ctx'e ekle
+            ctx["transport"] = {
+                loc: place_category_suggestions.get(loc, {}).get("transport", "No transport info.")
+                for loc in locs
+            }
+
+            ctx["weather"] = weather_summary
+
+            # Suggested detaylarını ctx'e ekle
+            ctx["suggested"] = []
             detailed_locations = []
-            suggested_places = []
             for loc in locs:
-                itinerary_locations.append(loc)
                 all_keys = place_category_suggestions.get(loc, {})
                 normalized_keys = {k.lower(): k for k in all_keys}
                 for category in categories:
                     actual_key = normalized_keys.get(category)
                     if actual_key:
                         entries = place_category_suggestions[loc][actual_key]
-                        itinerary_locations.extend([e["name"] for e in entries])
+                        place_names = [e["name"] for e in entries]
                         detailed_locations.extend([{"name": e["name"], "lat": e["lat"], "lng": e["lng"]} for e in entries])
-                        suggested_places.append(f"{loc} ({actual_key}): " + ", ".join([e["name"] for e in entries]))
+                        ctx["suggested"].append({
+                            "district": loc,
+                            "category": actual_key,
+                            "places": place_names
+                        })
+
+            # Grup formatlı mesaj üretimi
+            grouped_places = ""
+            for entry in ctx.get("suggested", []):
+                grouped_places += f"- {entry['district']} ({entry['category'].title()}): {', '.join(entry['places'])}\n"
+
+            grouped_transport = ""
+            for district, info in ctx.get("transport", {}).items():
+                if isinstance(info, list):
+                 lines = info
+            else:
+                lines = str(info).strip().split("\n")
+
+                grouped_transport += f"- {district}:\n"
+                for line in lines:
+                    grouped_transport += f"   {line.strip()}\n"
 
             return {
-                "response": f"Here is your itinerary:\n\nItinerary Locations: {', '.join(locs)} (type: {raw_category})\n\nSuggested Places:\n{chr(10).join(suggested_places)}\n\nTransport Info:\n{transport}\n\nWeather Forecast:\n{weather_summary}\n\n{'Route is included.' if route else 'No route available for a single location.'}",
-                "awaiting": None,
+                "response": f"""
+➡️  Weather:
+{ctx.get("weather")}
+
+➡️  Tour Theme: {ctx.get("category", "").title()}
+
+➡️  You Must Visit These Spots : 👇
+{grouped_places.strip()}
+
+➡️  Public Transport Information:
+{grouped_transport.strip()}
+
+🔄  Ask for a new plan anytime!
+➡️  Check the Map below  👇""",
+                "extraData": {
+                    "type": "itinerary",
+                    "travelDate": ctx.get("travel_date"),
+                    "locations": ctx.get("locations"),
+                    "category": ctx.get("category"),
+                    "suggested": ctx.get("suggested"),
+                    "transport": ctx.get("transport"),
+                    "weather": ctx.get("weather")
+                },
+                "extraData2": {
+                    "type": "itinerary",
+                    "travelDate": ctx.get("travel_date"),
+                    "locations": ctx.get("locations"),
+                    "category": ctx.get("category"),
+                    "suggested": ctx.get("suggested"),
+                    "transport": ctx.get("transport"),
+                    "weather": ctx.get("weather")
+                },
                 "context": ctx,
-                "route_geojson": route,
                 "locations": detailed_locations
             }
 
@@ -260,6 +300,7 @@ async def generate_itinerary(req: PromptRequest):
             "awaiting": None,
             "context": {}
         }
+
     
     
     #run command:
