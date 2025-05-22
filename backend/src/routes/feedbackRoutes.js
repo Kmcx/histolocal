@@ -1,5 +1,5 @@
 const express = require('express');
-const { createFeedback, getGuideFeedback, getUserFeedback,getFeedbackForTour,getFeedbacksByTour } = require('../controllers/feedbackController');
+const { createFeedback, getGuideFeedback, getUserFeedback,getFeedbackForTour,getFeedbacksByTour,getGuideAverageRating  } = require('../controllers/feedbackController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -86,6 +86,8 @@ router.get('/user/:userId', getUserFeedback);
 router.get('/tour/:tourId', protect, getFeedbackForTour);
 
 router.get('/bytour/:tourId', getFeedbacksByTour);
+
+router.get('/average/:guideId', getGuideAverageRating);
 
 
 

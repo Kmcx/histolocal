@@ -67,6 +67,27 @@ const getUserFeedback = async (req, res) => {
       res.status(500).json({ message: 'Error fetching feedbacks', error: error.message });
     }
   };
+
+  // Ortalama puanı hesapla
+const getGuideAverageRating = async (req, res) => {
+  const { guideId } = req.params;
+
+  try {
+    const feedbacks = await Feedback.find({ toUser: guideId });
+
+    if (feedbacks.length === 0) {
+      return res.status(200).json({ averageRating: 0 });
+    }
+
+    const total = feedbacks.reduce((sum, fb) => sum + fb.rating, 0);
+    const average = total / feedbacks.length;
+
+    res.status(200).json({ averageRating: average.toFixed(2) });
+  } catch (error) {
+    res.status(500).json({ message: 'Error calculating average rating', error: error.message });
+  }
+};
+
   
   
   
@@ -75,4 +96,6 @@ module.exports = { createFeedback,
     getGuideFeedback, 
     getUserFeedback,
     getFeedbackForTour,
-    getFeedbacksByTour };
+    getFeedbacksByTour,
+  getGuideAverageRating };
+ 
