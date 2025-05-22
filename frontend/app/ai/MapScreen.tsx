@@ -31,8 +31,9 @@ export default function MapInline({ locations }: { locations: LocationItem[] }) 
           L.marker([lat, lng]).addTo(map).bindPopup(names[i]);
         });
 
-        const polyline = L.polyline(points, { color: 'blue' }).addTo(map);
-        map.fitBounds(polyline.getBounds());
+        const bounds = L.latLngBounds(points);
+        map.fitBounds(bounds);
+
       </script>
     </body>
     </html>

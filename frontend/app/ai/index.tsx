@@ -13,6 +13,7 @@ import {
   Image,
   Keyboard,
   KeyboardEvent,
+  TextStyle
 } from 'react-native';
 import { BottomNavigationBar } from '../../components/BottomNavigationBar';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,16 +24,39 @@ import logo from '../../assets/logo.png';
 import TopNavbar from '../../components/TopNavbar';
 import { aiClient } from "@lib/axiosInstance";
 
+
 const NAVBAR_HEIGHT = 60;
 const TOPNAV_HEIGHT = Platform.OS === 'ios' ? 60 : 40;
 
-type Message = {
+// Map mesajları için
+type MapMessage = {
   id: string;
-  role: 'user' | 'ai' | 'map';
+  role: 'map';
   text: string;
   timestamp: string;
   extraData?: { name: string; lat: number; lng: number }[];
 };
+
+// AI ve User mesajları için
+type AIOrUserMessage = {
+  id: string;
+  role: 'user' | 'ai';
+  text: string;
+  timestamp: string;
+  extraData2?: {
+    type: 'itinerary';
+    travelDate: string;
+    locations: string[];
+    category: string;
+    suggested: { district: string; category: string; places: string[] }[];
+    transport: Record<string, string>;
+    weather: string | Record<string, string>;
+  };
+};
+
+// Tüm mesajları temsil eden birleşik tür
+type Message = MapMessage | AIOrUserMessage;
+
 
 export default function AIChatScreen() {
   const { messages, setMessages } = useAIChat() as {
@@ -101,6 +125,7 @@ export default function AIChatScreen() {
       role: "ai",
       text: data.response || "No response received.",
       timestamp: new Date().toLocaleTimeString(),
+      extraData2: data.extraData2,
     };
 
     setContext(data.context || {});
@@ -135,60 +160,116 @@ export default function AIChatScreen() {
   }
 };
 
-  const renderMarkdown = (text: string) => {
-    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|\[.*?\]\(.*?\))/g);
-    return parts.map((part, index) => {
-      if (/^\*\*(.*?)\*\*$/.test(part)) {
-        return <Text key={index} style={{ fontWeight: 'bold' }}>{part.replace(/\*\*/g, '')}</Text>;
-      }
-      if (/^\*(.*?)\*$/.test(part)) {
-        return <Text key={index} style={{ fontStyle: 'italic' }}>{part.replace(/\*/g, '')}</Text>;
-      }
-      if (/^\[(.*?)\]\((.*?)\)$/.test(part)) {
-        const match = part.match(/^\[(.*?)\]\((.*?)\)$/);
+
+const renderMarkdown = (text: string) => {
+  const lines = text.split("\n");
+
+  return (
+    <View>
+      {lines.map((line, index) => {
+        let style: TextStyle = {
+          fontSize: 15,
+          color: '#2f3640',
+          lineHeight: 22,
+        };
+
+        let emoji = "";
+        const lower = line.toLowerCase();
+
+        // 🔹 Başlıklar
+        if (line.startsWith("Tour Theme")) {
+          style = styles.itinerarySectionTitle;
+        }
+        if (line.startsWith("Must")) {
+          style = styles.itinerarySectionTitle;
+        }
+        if (line.startsWith("Public")) {
+          style = styles.itinerarySectionTitle;
+        }
+        if (line.startsWith("🔄")) {
+          style = styles.itinerarySectionTitle;
+        }
+        if (line.startsWith("➡️")) {
+          style = styles.itinerarySectionTitle;
+        }
+
+        // 🔹 Emoji ve özel font satırları
+        if (lower.includes("sunny")) emoji = "☀️ ";
+        if (lower.includes("rain")) emoji = "🌧️ ";
+        if (lower.includes("cloud")) emoji = "☁️ ";
+        if (line.includes("(Nature)")) emoji = "🌲 ";
+        if (line.includes("(Beaches)")) emoji = "🏖️ ";
+        if (line.includes("(City Life)")) emoji = "🌆 ";
+        if (line.includes("(Historical Sites)")) emoji = "🏛️ ";
+        if (lower.includes("metro")) emoji = "🚇 ";
+        if (lower.includes("bus") || lower.includes("eshot")) emoji = "🚌 ";
+        if (lower.includes("ferry")) emoji = "⛴️ ";
+
+        // 🔹 Emoji’li satırlar daha büyük gösterilsin
+        if (emoji) {
+          style = styles.itineraryEmojiLine;
+        }
+
         return (
-          <Text key={index} style={{ color: 'blue' }} onPress={() => Linking.openURL(match![2])}>
-            {match![1]}
+          <Text key={index} style={style}>
+            {emoji + line}
           </Text>
         );
-      }
-      return <Text key={index}>{part}</Text>;
-    });
-  };
+      })}
+    </View>
+  );
+};
+
+
+
 
   const renderItem = ({ item }: { item: Message }) => {
-    if (item.role === 'map') {
-      return (
-        <View style={{ height: 400, marginVertical: 10 }}>
-          <MapInline locations={item.extraData || []} />
-        </View>
-      );
-    }
-    const isUser = item.role === 'user';
+  if (item.role === 'map') {
     return (
-      <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
-        {isUser ? (
-          <Ionicons
-            name="person-circle-outline"
-            size={30}
-            color="#4A90E2"
-            style={{ marginRight: 8 }}
-          />
-        ) : (
-          <Image source={logo} style={styles.aiLogo} resizeMode="contain" />
-        )}
-        <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.aiBubble]}>
-          <Text style={styles.messageText}>{renderMarkdown(item.text)}</Text>
-          {item.timestamp && (
-            <Text style={styles.timestamp}>{item.timestamp}</Text>
-          )}
-          {item.id === 'typing' && (
-            <ActivityIndicator size="small" color="#555" />
-          )}
-        </View>
+      <View style={{ height: 400, marginVertical: 10 }}>
+        <MapInline locations={item.extraData || []} />
       </View>
     );
-  };
+  }
+
+  const isUser = item.role === 'user';
+  const isItinerary = item.role === 'ai' && item.extraData2?.type === 'itinerary';
+
+  return (
+    <View style={[styles.messageContainer, isUser ? styles.userAlign : styles.aiAlign]}>
+      {isUser ? (
+        <Ionicons
+          name="person-circle-outline"
+          size={30}
+          color="#4A90E2"
+          style={{ marginRight: 8 }}
+        />
+      ) : (
+        <Image source={logo} style={styles.aiLogo} resizeMode="contain" />
+      )}
+
+      <View style={[
+        styles.messageBubble,
+        isUser
+          ? styles.userBubble
+          : (isItinerary ? styles.itineraryBubble : styles.aiBubble)
+      ]}>
+        {isItinerary && (
+         <Text style={styles.itineraryTitle}>
+          {(item.extraData2?.locations || []).join(" - ") + " Tour Plan " + new Date().toLocaleDateString('en-GB') + " 🔥"}
+         </Text>
+
+        )}
+        {renderMarkdown(item.text)}
+
+
+        {item.timestamp && <Text style={styles.timestamp}>{item.timestamp}</Text>}
+        {item.id === 'typing' && <ActivityIndicator size="small" color="#555" />}
+      </View>
+    </View>
+  );
+};
+
 
   return (
     <KeyboardAvoidingView
@@ -303,4 +384,38 @@ const styles = StyleSheet.create({
     borderColor: '#e8e8e8',
     backgroundColor: colors.card,
   },
+  itineraryBubble: {
+  backgroundColor: '#ffffff',
+  borderWidth: 1,
+  borderColor: '#96cdcd',
+  padding: 12,
+  borderRadius: 14,
+  marginTop: 4,
+},
+itineraryTitle: {
+  fontSize: 25,
+  fontWeight: 'bold',
+  marginBottom: 6,
+  color: '#1c0f45',
+},
+itineraryContentText: {
+  fontSize: 20,
+  color: '#2f3640',
+  lineHeight: 22,
+},
+
+itinerarySectionTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginTop: 8,
+  marginBottom: 4,
+  color: '#0a3d62',
+},
+
+itineraryEmojiLine: {
+  fontSize: 20,
+  color: '#1e272e',
+}
+
+
 });
