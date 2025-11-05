@@ -2,6 +2,9 @@
 
 AI-powered Travel Assistant for Cultural Discovery in İzmir
 
+| What is Histolocal | How to Use | Match With Guides |
+|------------------|-----------------|----------------|
+| ![](assets/2.png) | ![](assets/3.png) | ![](assets/4.png) |
 ---
 
 ## About the Project
@@ -19,17 +22,13 @@ Powered by Ollama AI and built with a modular architecture, Histolocal is a prot
 
 ## Screenshots
 
-| AI-Generated Plan | Map Integration | Guide Matching |
+| AI-Generated Plan | Map Integration | Personalized Tour |
 |------------------|-----------------|----------------|
-| ![](assets/screenshots/aichat2.jpg) | ![](assets/screenshots/aichat3.jpg) | ![](assets/screenshots/toursPagee1.jpg) |
+| ![](assets/aichat1.jpg) | ![](assets/aichat2.jpg) | ![](assets/aichat3.jpg) |
 
 ---
 
 ## System Architecture
-
-<p align="center">
-  <img src="assets/system-architecture.png" alt="Histolocal System Architecture" width="700"/>
-</p>
 
 ### Frontend (React Native + Expo)
 - Cross-platform mobile app
@@ -100,6 +99,10 @@ Guides enhance visitor experiences by offering local insights and AI-enhanced pl
 
 İzmir'de kültürel keşif için yapay zeka destekli seyahat yardımcısı
 
+| Histolocal Nedir? | Nasıl Kullanılır? | Yerel Rehberlerle Eşleş |
+|------------------|-----------------|----------------|
+| ![](assets/2.png) | ![](assets/3.png) | ![](assets/4.png) |
+
 ---
 
 ## Proje Hakkında
@@ -117,17 +120,13 @@ Ollama AI altyapısıyla güçlendirilmiş, modüler bir mimariye sahip olan His
 
 ## Ekran Görselleri
 
-| AI Turu | Harita Görünümü | Rehber Eşleşme |
-|--------|------------------|----------------|
-| ![](assets/screenshots/aichat2.jpg) | ![](assets/screenshots/aichat3.jpg) | ![](assets/screenshots/toursPagee1.jpg) |
+| AI-Turu | Harita Entegrasyonu | Kişiselleştirilmiş Tur |
+|------------------|-----------------|----------------|
+| ![](assets/aichat1.jpg) | ![](assets/aichat2.jpg) | ![](assets/aichat3.jpg) |
 
 ---
 
 ## Sistem Mimarisi
-
-<p align="center">
-  <img src="assets/system-architecture.png" alt="Histolocal System Architecture" width="700"/>
-</p>
 
 ### Ön Yüz (React Native + Expo)
 - iOS ve Android için mobil uygulama
